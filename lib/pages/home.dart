@@ -30,12 +30,13 @@ class _HomeState extends State<Home> {
       response = await http
           .get(url + 'photo-sensor', headers: {"Accept": "plain/text"});
       setState(() {
-        var photoSensorValue = double.parse(response.body);
-        if (photoSensorValue < 300.00) {
+        double photoSensorData = double.parse(response.body);
+        photoSensorValue = photoSensorData.toString();
+
+        if (photoSensorData < 300.00) {
           timeIcon = WeatherIcons.night_clear;
           welcomeText = "Dobrý večer";
         }
-        print(photoSensorValue);
       });
     } catch (e) {
       photoSensorValue = 'Nelze načíst data';
@@ -441,24 +442,14 @@ class _HomeState extends State<Home> {
               ),
             ),
           ),
-          child: Padding(
-            padding: const EdgeInsets.only(left: 5),
-            child: Row(
-              children: <Widget>[
-                Icon(
-                  Icons.timer,
-                  color: Colors.grey,
-                  size: 15,
-                ),
-                Text(
-                  sensorValue,
-                  style: TextStyle(
-                    color: Colors.grey,
-                  ),
-                )
-              ],
+          child: Center(
+              child: Text(
+            sensorValue,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.grey,
             ),
-          ),
+          )),
         ),
       ),
     );
