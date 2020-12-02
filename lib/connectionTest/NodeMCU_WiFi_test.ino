@@ -7,11 +7,12 @@ const char *ssid = "MI 9";
 const char *password = "huhuhuhu";
 boolean ledState = false;
 
+// Vytvoření webového serveru, který komunikuje přes HTTP na portu 80
 ESP8266WebServer server(80);
 
 void handleRoot() {
-  // Sending sample message if you try to open configured IP Address
-  server.send(200, "text/html", "<h1>You are connected</h1>");
+  // Zobrazí zprávu, pokud je vše správně nakonfigurované
+  server.send(200, "text/html", "<h1>Uspesne pripojeno</h1>");
 }
 
 void setup() {
@@ -19,7 +20,7 @@ void setup() {
   delay(1000);
   Serial.begin(9600);
   
-  //Trying to connect to the WiFi
+  // Připojení k WiFi
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
@@ -29,48 +30,32 @@ void setup() {
   Serial.println("Local IP:");
   Serial.println(WiFi.localIP());
 
-  // Setting IP Address to 192.168.1.200, you can change it as per your need, you also need to change IP in Flutter app too.
-  
-  IPAddress ip(192, 168, 1, 200);
+// Zde je potřeba upravit IP adresu (IP ze sériového monitoru)
+  IPAddress ip(192, 168, 43, 195);
   IPAddress gateway(192, 168, 1, 1);
   IPAddress subnet(255, 255, 255, 0);
   WiFi.config(ip, gateway, subnet);
 
+// Url pro akce
   server.on("/", handleRoot);
   server.on("/led", toggleLed);
-  server.on("/led/on", turnOnLed);
-  server.on("/led/off", turnOffLed);
   server.begin();
-  Serial.println("HTTP server started");
+  Serial.println("Pripojeno");
 }
 
 void toggleLed() {
   ledState = ! ledState;
   if (ledState == true) {
     digitalWrite(BUILTIN_LED, ledState);
-    server.send(200, "text/plain", "Off");
-    Serial.println("LED Off");
+    server.send(200, "text/plain", "vypnuto");
+    Serial.println("LED vypnuta");
   } else {
     digitalWrite(BUILTIN_LED, ledState);
-    server.send(200, "text/plain", "On");
-    Serial.println("LED On");
+    server.send(200, "text/plain", "zapnuto");
+    Serial.println("LED zapnuta");
   }
 }
 
-void turnOnLed() {
-  ledState = false;
-  digitalWrite(BUILTIN_LED, ledState);
-  server.send(200, "text/plain", "On");
-  Serial.println("LED On");
-}
-
-void turnOffLed() {
-  ledState = true;
-  digitalWrite(BUILTIN_LED, ledState);
-  server.send(200, "text/plain", "Off");
-  Serial.println("LED Off");
-}
-//
 void loop() {
   server.handleClient();
 }

@@ -1,18 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:m_m_smart_home/main.dart';
+import 'package:weather_icons/weather_icons.dart';
 import 'package:http/http.dart' as http;
-
-BuildContext scaffoldContext;
-
-displaySnackBar(BuildContext context, String msg) {
-  final snackBar = SnackBar(
-    content: Text(msg),
-    action: SnackBarAction(
-      label: 'Ok',
-      onPressed: () {},
-    ),
-  );
-  Scaffold.of(scaffoldContext).showSnackBar(snackBar);
-}
 
 class Home extends StatefulWidget {
   @override
@@ -20,114 +9,212 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
-  int _currentIndex = 0;
-
-  final tabs = [
-    Center(child: Text('Settings')),
-    Center(child: Text('Home')),
-    Center(child: Text('History')),
-  ];
-
   @override
+
   void initState() {
     super.initState();
-    getInitLedState(); // Getting initial state of LED, which is by default on
+    readPhotoSensorData();
   }
 
-  String _status = '';
-  String url =
-      'http://192.168.43.48/'; //IP Address which is configured in NodeMCU Sketch
+  String url = WifiSetup.url;
+  String photoSensorValue = 'Neaktualizováno';
   var response;
+  IconData timeIcon = WeatherIcons.day_sunny;
 
-  getInitLedState() async {
+  readPhotoSensorData() async {
     try {
-      response = await http.get(url, headers: {"Accept": "plain/text"});
+      response = await http.get(url + '/photo-sensor', headers: {"Accept": "plain/text"});
       setState(() {
-        _status = 'On';
-      });
-    } catch (e) {
-      // If NodeMCU is not connected, it will throw error
-      print(e);
-      if (this.mounted) {
-        setState(() {
-          _status = 'Not Connected';
-        });
-      }
-    }
-  }
-
-  toggleLed() async {
-    try {
-      response = await http.get(url + 'led', headers: {"Accept": "plain/text"});
-      setState(() {
-        _status = response.body;
+        if (response.body < 300) {
+          timeIcon = WeatherIcons.night_clear;
+        }
+        photoSensorValue = response.body;
         print(response.body);
       });
     } catch (e) {
-      // If NodeMCU is not connected, it will throw error
-      print(e);
-      displaySnackBar(context, 'Module Not Connected');
+      print('nelze');
+      photoSensorValue = 'Nelze načíst data';
     }
   }
 
-  BuildContext scaffoldContext;
-
-  @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      backgroundColor: Color.fromRGBO(255, 255, 255, 0.95),
-      appBar: AppBar(
-        title: Text("M&M Smart Home"),
-        centerTitle: true,
-      ),
-      body: Builder(builder: (BuildContext context) {
-        scaffoldContext = context;
-        return ListView(
+      body: Container(
+        width: width,
+        height: height,
+        child: Stack(
           children: <Widget>[
             Container(
-              padding: const EdgeInsets.all(25.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  RaisedButton(
-                    onPressed: toggleLed,
-                    child: Text('Toggle LED'),
-                  ),
-                ],
+              width: width,
+              height: height * .30,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFFFF504A), Color(0xFFFFAEAB)],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
               ),
             ),
-            Text(
-              'LED Status: $_status',
-              textAlign: TextAlign.center,
+            buildHeader(width, height),
+            buildHeaderData(height, width),
+            buildHeaderInfoCard(height, width),
+            buildFloatingButton(width, height),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildHeader(double width, double height) {
+    return Positioned(
+      top: 30,
+      child: Container(
+        width: width,
+        height: height * .30,
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  BoxedIcon(timeIcon, color: Colors.white,),
+                ],
+              ),
             )
           ],
-        );
-      }),
-      bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              title: Text('Nastavení'),
-              backgroundColor: Colors.red,
+        ),
+      ),
+    );
+  }
+
+  Widget buildHeaderData(double height, double width) {
+    return Positioned(
+      top: (height * .30) / 2 - 40,
+      width: width,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Container(
+            height: 80,
+            width: 80,
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: new Border.all(color: Color(0xff2eb7a9), width: 3),
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: new NetworkImage(
+                      "https://images.csmonitor.com/csm/2012/11/babyinbucket.jpg?alias=standard_900x600nc"),
+                )),
+          ),
+          SizedBox(height: 5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                "Hi Rose",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16),
+              ),
+              Text(
+                ", Good Morning",
+                style: TextStyle(color: Colors.white70, fontSize: 16),
+              ),
+            ],
+          ),
+          Text(
+            "Today, 14 Aug 2017",
+            style: TextStyle(color: Colors.white70, fontSize: 13),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildHeaderInfoCard(double height, double width) {
+    return Positioned(
+      top: height * .30 - 25,
+      width: width,
+      child: Container(
+        alignment: Alignment.center,
+        child: Container(
+          height: 50,
+          width: width * .65,
+          child: Material(
+            elevation: 3,
+            borderRadius: BorderRadius.circular(30),
+            color: Colors.white,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    Text("Check In"),
+                    Text(
+                      "9:00 AM",
+                      style: TextStyle(
+                        color: Color(0xff053150),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ],
+                ),
+                Icon(
+                  Icons.access_time,
+                  size: 35,
+                  color: Colors.grey,
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text("Check In"),
+                    Text(
+                      "NOT YET",
+                      style: TextStyle(
+                        color: Color(0xff053150),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              title: Text('Domů'),
-              backgroundColor: Colors.red,
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.history),
-              title: Text('Historie'),
-              backgroundColor: Colors.red,
-            ),
-          ],
-          onTap: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          }
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildFloatingButton(double width, double height) {
+    return Positioned(
+      top: height - 85,
+      width: width,
+      child: Container(
+        height: 70,
+        width: 70,
+        child: RawMaterialButton(
+          shape: CircleBorder(),
+          fillColor: Color(0xff1a9bb1),
+          elevation: 4,
+          onPressed: () {},
+          child: Icon(
+            Icons.menu,
+            size: 35,
+            color: Colors.white,
+          ),
+        ),
       ),
     );
   }
