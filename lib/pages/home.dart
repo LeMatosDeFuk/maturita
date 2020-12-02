@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:m_m_smart_home/main.dart';
 import 'package:weather_icons/weather_icons.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -10,12 +11,15 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   @override
-
   void initState() {
-    super.initState();
     readPhotoSensorData();
+    super.initState();
   }
 
+  String formattedDate =
+      DateFormat('dd.MM.yyyy kk:mm').format(DateTime.now().toUtc());
+
+  String welcomeText = "Dobrý den";
   String url = WifiSetup.url;
   String photoSensorValue = 'Neaktualizováno';
   var response;
@@ -23,16 +27,17 @@ class _HomeState extends State<Home> {
 
   readPhotoSensorData() async {
     try {
-      response = await http.get(url + '/photo-sensor', headers: {"Accept": "plain/text"});
+      response = await http
+          .get(url + 'photo-sensor', headers: {"Accept": "plain/text"});
       setState(() {
-        if (response.body < 300) {
+        var photoSensorValue = double.parse(response.body);
+        if (photoSensorValue < 300.00) {
           timeIcon = WeatherIcons.night_clear;
+          welcomeText = "Dobrý večer";
         }
-        photoSensorValue = response.body;
-        print(response.body);
+        print(photoSensorValue);
       });
     } catch (e) {
-      print('nelze');
       photoSensorValue = 'Nelze načíst data';
     }
   }
@@ -62,6 +67,7 @@ class _HomeState extends State<Home> {
             buildHeaderData(height, width),
             buildHeaderInfoCard(height, width),
             buildFloatingButton(width, height),
+            buildNotificationPanel(width, height),
           ],
         ),
       ),
@@ -81,7 +87,10 @@ class _HomeState extends State<Home> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  BoxedIcon(timeIcon, color: Colors.white,),
+                  BoxedIcon(
+                    timeIcon,
+                    color: Colors.white,
+                  ),
                 ],
               ),
             )
@@ -116,20 +125,16 @@ class _HomeState extends State<Home> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                "Hi Rose",
+                welcomeText,
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 16),
               ),
-              Text(
-                ", Good Morning",
-                style: TextStyle(color: Colors.white70, fontSize: 16),
-              ),
             ],
           ),
           Text(
-            "Today, 14 Aug 2017",
+            formattedDate,
             style: TextStyle(color: Colors.white70, fontSize: 13),
           ),
         ],
@@ -213,6 +218,246 @@ class _HomeState extends State<Home> {
             Icons.menu,
             size: 35,
             color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildNotificationPanel(double width, double height) {
+    return Positioned(
+      width: width,
+      height: height * .70 - 40,
+      top: height * 0.30 + 34,
+      child: Padding(
+        padding: const EdgeInsets.only(right: 16, left: 16, top: 10),
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Material(
+                elevation: 1,
+                color: Colors.white,
+                child: Column(
+                  children: <Widget>[
+                    buildBodyCardTitle(title: "Data z čidel"),
+                    Divider(
+                      height: 3,
+                      color: Colors.black87,
+                    ),
+                    buildNotificationItem(
+                        icon: WeatherIcons.day_sunny,
+                        itemTitle: "Intenzita světla",
+                        sensorValue: photoSensorValue),
+                    Divider(
+                      height: 3,
+                      color: Colors.black87,
+                    ),
+                    buildNotificationItem(
+                        icon: WeatherIcons.humidity,
+                        itemTitle: "Vlhkost",
+                        sensorValue: photoSensorValue),
+                    Divider(
+                      height: 3,
+                      color: Colors.black87,
+                    ),
+                    buildNotificationItem(
+                        icon: WeatherIcons.thermometer,
+                        itemTitle: "Teplota",
+                        sensorValue: photoSensorValue),
+                    Divider(
+                      height: 3,
+                      color: Colors.black87,
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 15),
+              Material(
+                elevation: 1,
+                color: Colors.white,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    buildBodyCardTitle(title: "Invoice"),
+                    Divider(
+                      height: 2,
+                      color: Colors.black87,
+                    ),
+                    ListTile(
+                      contentPadding: const EdgeInsets.only(
+                        left: 10,
+                        top: 10,
+                        bottom: 10,
+                      ),
+                      leading: Card(
+                        elevation: 2,
+                        child: Container(
+                          height: 70,
+                          width: 60,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                "MAY",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              Text(
+                                "21",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            "Invoce 1013",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            "This month fate fee",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          Text(
+                            "PENDING",
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      trailing: Container(
+                        height: 70,
+                        width: 80,
+                        padding: const EdgeInsets.only(right: 5),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              "\$1200",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                            SizedBox(height: 2),
+                            Container(
+                              alignment: Alignment.center,
+                              height: 30,
+                              width: 80,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: Color(0xff1abcaa),
+                              ),
+                              child: Text(
+                                "PLAY NOW",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(height: 50),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildBodyCardTitle({String title}) {
+    return Container(
+      padding: const EdgeInsets.all(15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            title,
+            style: TextStyle(
+              color: Colors.red,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildNotificationItem({icon, String itemTitle, sensorValue}) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, bottom: 10),
+      child: ListTile(
+        contentPadding: const EdgeInsets.only(left: 10),
+        leading: Container(
+          height: 40,
+          width: 60,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.red,
+          ),
+          child: BoxedIcon(
+            icon,
+            size: 20,
+            color: Colors.white70,
+          ),
+        ),
+        title: Text(
+          itemTitle,
+        ),
+        trailing: Container(
+          height: 40,
+          width: 140,
+          decoration: BoxDecoration(
+            border: Border(
+              left: BorderSide(
+                width: 1,
+                color: Colors.black26,
+              ),
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 5),
+            child: Row(
+              children: <Widget>[
+                Icon(
+                  Icons.timer,
+                  color: Colors.grey,
+                  size: 15,
+                ),
+                Text(
+                  sensorValue,
+                  style: TextStyle(
+                    color: Colors.grey,
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),

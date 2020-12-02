@@ -14,6 +14,7 @@ environment:
 
 dependencies:
   weather_icons: 2.0.2
+  intl: ^0.16.1
   flutter:
     sdk: flutter
 
