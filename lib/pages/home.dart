@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:m_m_smart_home/main.dart';
+import 'package:M_M_Smart_Home/main.dart';
 import 'package:weather_icons/weather_icons.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -13,6 +13,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     readPhotoSensorData();
+    readDallasSensorData();
     super.initState();
   }
 
@@ -20,8 +21,11 @@ class _HomeState extends State<Home> {
       DateFormat('dd.MM.yyyy kk:mm').format(DateTime.now().toUtc());
 
   String welcomeText = "Dobrý den";
-  String url = WifiSetup.url;
+  String url = ProjectSetup.url;
+  String projectTitle = ProjectSetup.projectTitle;
   String photoSensorValue = 'Neaktualizováno';
+  String dallasSensorValue = 'Neaktualizováno';
+
   var response;
   IconData timeIcon = WeatherIcons.day_sunny;
 
@@ -37,6 +41,18 @@ class _HomeState extends State<Home> {
           timeIcon = WeatherIcons.night_clear;
           welcomeText = "Dobrý večer";
         }
+      });
+    } catch (e) {
+      photoSensorValue = 'Nelze načíst data';
+    }
+  }
+
+  readDallasSensorData() async {
+    try {
+      response = await http
+          .get(url + 'dallas-sensor', headers: {"Accept": "plain/text"});
+      setState(() {
+        dallasSensorValue = response.body;
       });
     } catch (e) {
       photoSensorValue = 'Nelze načíst data';
@@ -110,16 +126,14 @@ class _HomeState extends State<Home> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Container(
-            height: 80,
-            width: 80,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: new Border.all(color: Color(0xff2eb7a9), width: 3),
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: new NetworkImage(
-                      "https://images.csmonitor.com/csm/2012/11/babyinbucket.jpg?alias=standard_900x600nc"),
-                )),
+            padding: const EdgeInsets.only(top: 10, bottom: 20),
+            child: Text(
+              projectTitle,
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30),
+            ),
           ),
           SizedBox(height: 5),
           Row(
@@ -135,7 +149,7 @@ class _HomeState extends State<Home> {
             ],
           ),
           Text(
-            formattedDate,
+            "Dnes je " + formattedDate,
             style: TextStyle(color: Colors.white70, fontSize: 13),
           ),
         ],
@@ -164,9 +178,9 @@ class _HomeState extends State<Home> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    Text("Check In"),
+                    Text("Stav"),
                     Text(
-                      "9:00 AM",
+                      "Vše zalito",
                       style: TextStyle(
                         color: Color(0xff053150),
                         fontWeight: FontWeight.bold,
@@ -184,9 +198,9 @@ class _HomeState extends State<Home> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text("Check In"),
+                    Text("Další kontrola"),
                     Text(
-                      "NOT YET",
+                      "9:00",
                       style: TextStyle(
                         color: Color(0xff053150),
                         fontWeight: FontWeight.bold,
@@ -248,7 +262,8 @@ class _HomeState extends State<Home> {
                     buildNotificationItem(
                         icon: WeatherIcons.day_sunny,
                         itemTitle: "Intenzita světla",
-                        sensorValue: photoSensorValue),
+                        sensorValue: photoSensorValue,
+                        additionalSymbol: ""),
                     Divider(
                       height: 3,
                       color: Colors.black87,
@@ -256,7 +271,8 @@ class _HomeState extends State<Home> {
                     buildNotificationItem(
                         icon: WeatherIcons.humidity,
                         itemTitle: "Vlhkost",
-                        sensorValue: photoSensorValue),
+                        sensorValue: photoSensorValue,
+                        additionalSymbol: ""),
                     Divider(
                       height: 3,
                       color: Colors.black87,
@@ -264,7 +280,8 @@ class _HomeState extends State<Home> {
                     buildNotificationItem(
                         icon: WeatherIcons.thermometer,
                         itemTitle: "Teplota",
-                        sensorValue: photoSensorValue),
+                        sensorValue: dallasSensorValue,
+                        additionalSymbol: " \u2103"),
                     Divider(
                       height: 3,
                       color: Colors.black87,
@@ -272,117 +289,6 @@ class _HomeState extends State<Home> {
                   ],
                 ),
               ),
-              SizedBox(height: 15),
-              Material(
-                elevation: 1,
-                color: Colors.white,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    buildBodyCardTitle(title: "Invoice"),
-                    Divider(
-                      height: 2,
-                      color: Colors.black87,
-                    ),
-                    ListTile(
-                      contentPadding: const EdgeInsets.only(
-                        left: 10,
-                        top: 10,
-                        bottom: 10,
-                      ),
-                      leading: Card(
-                        elevation: 2,
-                        child: Container(
-                          height: 70,
-                          width: 60,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                "MAY",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              Text(
-                                "21",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            "Invoce 1013",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            "This month fate fee",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          Text(
-                            "PENDING",
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                      trailing: Container(
-                        height: 70,
-                        width: 80,
-                        padding: const EdgeInsets.only(right: 5),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              "\$1200",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                            ),
-                            SizedBox(height: 2),
-                            Container(
-                              alignment: Alignment.center,
-                              height: 30,
-                              width: 80,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: Color(0xff1abcaa),
-                              ),
-                              child: Text(
-                                "PLAY NOW",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(height: 50),
             ],
           ),
         ),
@@ -410,7 +316,8 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget buildNotificationItem({icon, String itemTitle, sensorValue}) {
+  Widget buildNotificationItem(
+      {icon, String itemTitle, sensorValue, additionalSymbol}) {
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 10),
       child: ListTile(
@@ -444,7 +351,7 @@ class _HomeState extends State<Home> {
           ),
           child: Center(
               child: Text(
-            sensorValue,
+            sensorValue + additionalSymbol,
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.grey,

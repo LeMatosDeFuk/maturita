@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:m_m_smart_home/pages/history.dart';
-import 'package:m_m_smart_home/pages/home.dart';
-import 'package:m_m_smart_home/pages/settings.dart';
+import 'package:M_M_Smart_Home/pages/history.dart';
+import 'package:M_M_Smart_Home/pages/home.dart';
+import 'package:M_M_Smart_Home/pages/settings.dart';
 
 void main() {
   runApp(MaterialApp(
-    title: "LED Blink",
+    title: ProjectSetup.projectTitle,
     debugShowCheckedModeBanner: false,
     home: Main(),
   ));
 }
 
-class WifiSetup {
-  static String url = 'http://192.168.43.195/';
+class ProjectSetup {
+  static String url = 'http://192.168.43.82/';
+  static String projectTitle = "M&M Smart Home";
 }
 
 class Main extends StatefulWidget {
@@ -42,7 +43,6 @@ class _MainState extends State<Main> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('M&M Smart Home'),
         backgroundColor: Colors.red,
       ),
       body: PageView(
