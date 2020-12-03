@@ -25,6 +25,7 @@ class _HomeState extends State<Home> {
   String projectTitle = ProjectSetup.projectTitle;
   String photoSensorValue = 'Neaktualizováno';
   String dallasSensorValue = 'Neaktualizováno';
+  String dallasSensorSymbol = "";
 
   var response;
   IconData timeIcon = WeatherIcons.day_sunny;
@@ -52,6 +53,7 @@ class _HomeState extends State<Home> {
       response = await http
           .get(url + 'dallas-sensor', headers: {"Accept": "plain/text"});
       setState(() {
+        dallasSensorSymbol = " \u2103";
         dallasSensorValue = response.body;
       });
     } catch (e) {
@@ -281,7 +283,7 @@ class _HomeState extends State<Home> {
                         icon: WeatherIcons.thermometer,
                         itemTitle: "Teplota",
                         sensorValue: dallasSensorValue,
-                        additionalSymbol: " \u2103"),
+                        additionalSymbol: dallasSensorSymbol),
                     Divider(
                       height: 3,
                       color: Colors.black87,
