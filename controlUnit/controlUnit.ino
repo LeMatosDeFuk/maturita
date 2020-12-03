@@ -27,7 +27,7 @@ void handleRoot() {
 void setup() {
   pinMode(photoResistor, INPUT);
   Serial.begin(9600);
-sensorDallas.begin();
+  sensorDallas.begin();
 
 
   // Připojení k WiFi
@@ -61,7 +61,7 @@ void getPhotoSensorValues() {
   //    Serial.println(sensorValue);
 
   float sensorValue = analogRead(photoResistor);
-  server.send(200, "text/plain", String (sensorValue));
+  server.send(200, "text/plain", String (sensorValue)); // Knihovna nepodporuje int ani float
   Serial.println(sensorValue);
 }
 
@@ -70,7 +70,7 @@ void getDallasSensorValues() {
   Serial.print("Teplota: ");
   Serial.print(sensorDallas.getTempCByIndex(0));
   Serial.println(" °C");
-  
+
   server.send(200, "text/plain", String(sensorDallas.getTempCByIndex(0)));
 
 }
