@@ -3,6 +3,8 @@ import 'package:M_M_Smart_Home/main.dart';
 import 'package:weather_icons/weather_icons.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'dart:async';
+import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -14,18 +16,26 @@ class _HomeState extends State<Home> {
   void initState() {
     readPhotoSensorData();
     readDallasSensorData();
+    readWaterSensorData();
+
     super.initState();
   }
 
-  String formattedDate =
+  String _formattedDate =
       DateFormat('dd.MM.yyyy kk:mm').format(DateTime.now().toUtc());
 
-  String welcomeText = "Dobrý den";
-  String url = ProjectSetup.url;
-  String projectTitle = ProjectSetup.projectTitle;
-  String photoSensorValue = 'Neaktualizováno';
-  String dallasSensorValue = 'Neaktualizováno';
-  String dallasSensorSymbol = "";
+  String _welcomeText = "Dobrý den";
+  String _url = ProjectSetup.url;
+  String _projectTitle = ProjectSetup.projectTitle;
+
+  String _photoSensorValue = 'Neaktualizováno';
+
+  String _dallasSensorValue = 'Neaktualizováno';
+  String _dallasSensorSymbol = "";
+
+  String _waterSensorSymbol = "";
+  String _waterSensorValue = 'Neaktualizováno';
+  double _waterSensorData = 0.0;
 
   var response;
   IconData timeIcon = WeatherIcons.day_sunny;
@@ -33,31 +43,45 @@ class _HomeState extends State<Home> {
   readPhotoSensorData() async {
     try {
       response = await http
-          .get(url + 'photo-sensor', headers: {"Accept": "plain/text"});
+          .get(_url + 'photo-sensor', headers: {"Accept": "plain/text"});
       setState(() {
         double photoSensorData = double.parse(response.body);
-        photoSensorValue = photoSensorData.toString();
+        _photoSensorValue = photoSensorData.toString();
 
         if (photoSensorData < 300.00) {
           timeIcon = WeatherIcons.night_clear;
-          welcomeText = "Dobrý večer";
+          _welcomeText = "Dobrý večer";
         }
       });
     } catch (e) {
-      photoSensorValue = 'Nelze načíst data';
+      _photoSensorValue = 'Nelze načíst data';
     }
   }
 
   readDallasSensorData() async {
     try {
       response = await http
-          .get(url + 'dallas-sensor', headers: {"Accept": "plain/text"});
+          .get(_url + 'dallas-sensor', headers: {"Accept": "plain/text"});
       setState(() {
-        dallasSensorSymbol = " \u2103";
-        dallasSensorValue = response.body;
+        _dallasSensorSymbol = " \u2103";
+        _dallasSensorValue = response.body;
       });
     } catch (e) {
-      photoSensorValue = 'Nelze načíst data';
+      _photoSensorValue = 'Nelze načíst data';
+    }
+  }
+
+  readWaterSensorData() async {
+    try {
+      response = await http
+          .get(_url + 'water-sensor', headers: {"Accept": "plain/text"});
+      setState(() {
+        _waterSensorValue = response.body;
+        double _waterSensorData = double.parse(_waterSensorValue);
+        _waterSensorSymbol = "%";
+      });
+    } catch (e) {
+      _waterSensorValue = 'Nelze načíst data';
     }
   }
 
@@ -130,7 +154,7 @@ class _HomeState extends State<Home> {
           Container(
             padding: const EdgeInsets.only(top: 10, bottom: 20),
             child: Text(
-              projectTitle,
+              _projectTitle,
               style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -142,7 +166,7 @@ class _HomeState extends State<Home> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                welcomeText,
+                _welcomeText,
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -151,7 +175,7 @@ class _HomeState extends State<Home> {
             ],
           ),
           Text(
-            "Dnes je " + formattedDate,
+            "Dnes je " + _formattedDate,
             style: TextStyle(color: Colors.white70, fontSize: 13),
           ),
         ],
@@ -247,7 +271,8 @@ class _HomeState extends State<Home> {
       height: height * .70 - 40,
       top: height * 0.30 + 34,
       child: Padding(
-        padding: const EdgeInsets.only(right: 16, left: 16, top: 10),
+        padding:
+            const EdgeInsets.only(right: 16, left: 16, top: 10, bottom: 220),
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
@@ -261,10 +286,15 @@ class _HomeState extends State<Home> {
                       height: 3,
                       color: Colors.black87,
                     ),
+                    buildWaterBar(),
+                    Divider(
+                      height: 3,
+                      color: Colors.black87,
+                    ),
                     buildNotificationItem(
                         icon: WeatherIcons.day_sunny,
                         itemTitle: "Intenzita světla",
-                        sensorValue: photoSensorValue,
+                        sensorValue: _photoSensorValue,
                         additionalSymbol: ""),
                     Divider(
                       height: 3,
@@ -273,7 +303,7 @@ class _HomeState extends State<Home> {
                     buildNotificationItem(
                         icon: WeatherIcons.humidity,
                         itemTitle: "Vlhkost",
-                        sensorValue: photoSensorValue,
+                        sensorValue: _photoSensorValue,
                         additionalSymbol: ""),
                     Divider(
                       height: 3,
@@ -282,8 +312,8 @@ class _HomeState extends State<Home> {
                     buildNotificationItem(
                         icon: WeatherIcons.thermometer,
                         itemTitle: "Teplota",
-                        sensorValue: dallasSensorValue,
-                        additionalSymbol: dallasSensorSymbol),
+                        sensorValue: _dallasSensorValue,
+                        additionalSymbol: _dallasSensorSymbol),
                     Divider(
                       height: 3,
                       color: Colors.black87,
@@ -316,6 +346,48 @@ class _HomeState extends State<Home> {
         ],
       ),
     );
+  }
+
+  Widget buildWaterBar(
+      {icon, String itemTitle, sensorValue, additionalSymbol}) {
+    return Padding(
+        padding: const EdgeInsets.only(top: 20, bottom: 20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Column(
+              children: [
+                Text(
+                  'Hladina vody v nádrži',
+                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  height: 130,
+                  width: 130,
+                  child: LiquidCircularProgressIndicator(
+                    value: _waterSensorData / 100,
+                    // Defaults to 0.5.
+                    valueColor: AlwaysStoppedAnimation(Colors.red),
+                    backgroundColor: Colors.white,
+                    borderColor: Colors.red,
+                    borderWidth: 4.0,
+                    direction: Axis.vertical,
+                    center: Text(
+                      _waterSensorValue.toString() + _waterSensorSymbol,
+                      style: TextStyle(
+                          fontSize: 12.0,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ));
   }
 
   Widget buildNotificationItem(

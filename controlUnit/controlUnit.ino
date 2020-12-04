@@ -7,6 +7,7 @@
 
 const int Dallas = 5;
 const int photoResistor = A0;
+const int photoResistor = 3;
 int sensorValue;				  // Proměnná pro uložení hodnoty z fotorezistoru (0-1023)
 
 OneWire oneWireDS(Dallas);
@@ -50,19 +51,17 @@ void setup() {
   server.on("/", handleRoot);
   server.on("/photo-sensor", getPhotoSensorValues);
   server.on("/dallas-sensor", getDallasSensorValues);
+  server.on("/water-sensor", getWaterSensorValues);
   server.begin();
   Serial.println("Pripojeno");
 }
 
 void getPhotoSensorValues() {
-  //    float sensorValue = analogRead(photoResistor);
-  //    String json = "{ \"photoSensorValue\": " + String(sensorValue) + " }"; // Knihovna nepodporuje int ani float
-  //    server.send(200, "application/json", json);
-  //    Serial.println(sensorValue);
+  float photoSensorValue = analogRead(photoResistor);
+  Serial.print("Intenzita svetla: ");
+  Serial.println(photoSensorValue);
 
-  float sensorValue = analogRead(photoResistor);
-  server.send(200, "text/plain", String (sensorValue)); // Knihovna nepodporuje int ani float
-  Serial.println(sensorValue);
+  server.send(200, "text/plain", String (photoSensorValue)); // Knihovna nepodporuje int ani float
 }
 
 void getDallasSensorValues() {
@@ -72,7 +71,15 @@ void getDallasSensorValues() {
   Serial.println(" °C");
 
   server.send(200, "text/plain", String(sensorDallas.getTempCByIndex(0)));
+}
 
+
+void getWaterSensorValues() {
+  float waterSensorValue = digitalRead(waterSensor);
+  Serial.print("Hladina vody: ");
+  Serial.println(waterSensorValue);
+
+  server.send(200, "text/plain", String (waterSensorValue));
 }
 
 void loop() {

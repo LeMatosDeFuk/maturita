@@ -1,5 +1,5 @@
 const int photoResistor = A0;
-int sensorValue;				          // Proměnná pro uložení hodnoty z fotorezistoru (0-1023)
+int sensorValue;
 
 void setup(){
  pinMode(photoResistor, INPUT);
