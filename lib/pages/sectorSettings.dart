@@ -24,15 +24,15 @@ class _SectorSettingsState extends State<SectorSettings> {
 
   var response;
 
-  void add(_number) {
+  void add(value) {
     setState(() {
-      if (_number < 4) _number++;
+      if (value < 4) value++;
     });
   }
 
-  void minus(_number) {
+  void minus(value) {
     setState(() {
-      if (_number != 1) _number--;
+      if (value != 1) value--;
     });
   }
 
