@@ -17,7 +17,11 @@ class _SectorSettingsState extends State<SectorSettings> {
   String _url = ProjectSetup.url;
   String _projectTitle = ProjectSetup.projectTitle;
 
-  int _number = 1;
+  int _first = 1;
+  int _second = 1;
+  int _third = 1;
+  int _fourth = 1;
+
   var response;
 
   void add(_number) {
@@ -119,25 +123,25 @@ class _SectorSettingsState extends State<SectorSettings> {
                 child: Column(
                   children: <Widget>[
                     buildBodyCardTitle(title: "Nastavení priority sektoru 1"),
-                    buildNumberInput("1"),
+                    buildNumberInput("1", _first),
                     Divider(
                       height: 3,
                       color: Colors.black87,
                     ),
                     buildBodyCardTitle(title: "Nastavení priority sektoru 2"),
-                    buildNumberInput("2"),
+                    buildNumberInput("2", _second),
                     Divider(
                       height: 3,
                       color: Colors.black87,
                     ),
                     buildBodyCardTitle(title: "Nastavení priority sektoru 3"),
-                    buildNumberInput("3"),
+                    buildNumberInput("3", _third),
                     Divider(
                       height: 3,
                       color: Colors.black87,
                     ),
                     buildBodyCardTitle(title: "Nastavení priority sektoru 4"),
-                    buildNumberInput("4"),
+                    buildNumberInput("4", _fourth),
                   ],
                 ),
               ),
@@ -214,7 +218,7 @@ class _SectorSettingsState extends State<SectorSettings> {
     );
   }
 
-  Widget buildNumberInput(number) {
+  Widget buildNumberInput(number, variable) {
     return Container(
       height: 50,
       width: 150,
@@ -225,14 +229,14 @@ class _SectorSettingsState extends State<SectorSettings> {
           children: <Widget>[
             new FloatingActionButton(
               heroTag: "buttonPlus" + number,
-              onPressed: add,
+              onPressed: add(variable),
               child: new Icon(Icons.add, color: Colors.black),
               backgroundColor: Colors.white,
             ),
-            new Text('$_number', style: new TextStyle(fontSize: 30.0)),
+            new Text('$variable', style: new TextStyle(fontSize: 30.0)),
             new FloatingActionButton(
               heroTag: "buttonMinus" + number,
-              onPressed: minus(1),
+              onPressed: minus(variable),
               child: new Icon(Icons.remove, color: Colors.black),
               backgroundColor: Colors.white,
             ),
