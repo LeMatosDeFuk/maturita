@@ -24,16 +24,35 @@ class _SectorSettingsState extends State<SectorSettings> {
 
   var response;
 
-  void add(value) {
+  void add(number, numberVariable) {
     setState(() {
-      if (value < 4) value++;
+      if (number < 4) number++;
+      assignVariable(number, numberVariable);
     });
   }
 
-  void minus(value) {
+  void minus(number, numberVariable) {
     setState(() {
-      if (value != 1) value--;
+      if (number != 1) number--;
+      assignVariable(number, numberVariable);
     });
+  }
+
+  void assignVariable(number, numberVariable) {
+    switch (numberVariable) {
+      case "1":
+        _first = number;
+        break;
+      case "2":
+        _second = number;
+        break;
+      case "3":
+        _third = number;
+        break;
+      case "4":
+        _fourth = number;
+        break;
+    }
   }
 
   Widget build(BuildContext context) {
@@ -229,14 +248,14 @@ class _SectorSettingsState extends State<SectorSettings> {
           children: <Widget>[
             new FloatingActionButton(
               heroTag: "buttonPlus" + number,
-              onPressed: add(variable),
+              onPressed: () => add(variable, number),
               child: new Icon(Icons.add, color: Colors.black),
               backgroundColor: Colors.white,
             ),
             new Text('$variable', style: new TextStyle(fontSize: 30.0)),
             new FloatingActionButton(
               heroTag: "buttonMinus" + number,
-              onPressed: minus(variable),
+              onPressed: () => minus(variable, number),
               child: new Icon(Icons.remove, color: Colors.black),
               backgroundColor: Colors.white,
             ),
