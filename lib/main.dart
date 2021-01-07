@@ -1,8 +1,10 @@
+import 'package:M_M_Smart_Home/pages/settings.dart';
+import 'package:M_M_Smart_Home/pages/sectorSettings.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:M_M_Smart_Home/pages/history.dart';
 import 'package:M_M_Smart_Home/pages/home.dart';
-import 'package:M_M_Smart_Home/pages/settings.dart';
+import 'package:M_M_Smart_Home/pages/sectorSettings.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -25,7 +27,7 @@ class Main extends StatefulWidget {
 class _MainState extends State<Main> {
   BuildContext scaffoldContext;
   PageController _pageController = PageController();
-  List<Widget> _screens = [Home(), Settings(), History()];
+  List<Widget> _screens = [Home(), Settings(), History(), SectorSettings()];
 
   int _selectedIndex = 0;
 
@@ -43,6 +45,7 @@ class _MainState extends State<Main> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: Text(ProjectSetup.projectTitle),
         backgroundColor: Colors.red,
       ),
       body: PageView(

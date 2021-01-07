@@ -1,57 +1,51 @@
+import 'package:M_M_Smart_Home/pages/sectorSettings.dart';
 import 'package:flutter/material.dart';
+import 'package:M_M_Smart_Home/main.dart';
 import 'package:weather_icons/weather_icons.dart';
+import 'package:http/http.dart' as http;
 
-class Settings extends StatelessWidget {
+class Settings extends StatefulWidget {
   @override
+  SettingsState createState() => SettingsState();
+}
+
+class SettingsState extends State<Settings> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  String _url = ProjectSetup.url;
+  String _projectTitle = ProjectSetup.projectTitle;
+
+  var response;
+
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      body: Container(
-        width: width,
-        height: height,
-        child: Stack(
-          children: <Widget>[
-            Container(
-              width: width,
-              height: height * .30,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFFFF504A), Color(0xFFFFAEAB)],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
+      body: SingleChildScrollView(
+        child: Container(
+          width: width,
+          height: height,
+          child: Stack(
+            children: <Widget>[
+              Container(
+                width: width,
+                height: height * .30,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFFFF504A), Color(0xFFFFAEAB)],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
                 ),
               ),
-            ),
-            buildHeader(width, height),
-            buildHeaderData(height, width),
-            buildHeaderInfoCard(height, width),
-            buildFloatingButton(width, height),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildHeader(double width, double height) {
-    return Positioned(
-      top: 30,
-      child: Container(
-        width: width,
-        height: height * .30,
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  BoxedIcon(WeatherIcons.day_sunny, color: Colors.white,),
-                ],
-              ),
-            )
-          ],
+              buildHeaderData(height, width),
+              buildContent(width, height),
+            ],
+          ),
         ),
       ),
     );
@@ -66,123 +60,105 @@ class Settings extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Container(
-            height: 80,
-            width: 80,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: new Border.all(color: Color(0xff2eb7a9), width: 3),
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: new NetworkImage(
-                      "https://images.csmonitor.com/csm/2012/11/babyinbucket.jpg?alias=standard_900x600nc"),
-                )),
+            padding: const EdgeInsets.only(top: 10, bottom: 20),
+            child: Text(
+              _projectTitle,
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30),
+            ),
           ),
           SizedBox(height: 5),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                "Hi Rose",
+                "Nastavení úrovní",
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 16),
               ),
-              Text(
-                ", Good Morning",
-                style: TextStyle(color: Colors.white70, fontSize: 16),
-              ),
             ],
-          ),
-          Text(
-            "Today, 14 Aug 2017",
-            style: TextStyle(color: Colors.white70, fontSize: 13),
           ),
         ],
       ),
     );
   }
 
-  Widget buildHeaderInfoCard(double height, double width) {
+  Widget buildContent(double width, double height) {
     return Positioned(
-      top: height * .30 - 25,
       width: width,
-      child: Container(
-        alignment: Alignment.center,
-        child: Container(
-          height: 50,
-          width: width * .65,
-          child: Material(
-            elevation: 3,
-            borderRadius: BorderRadius.circular(30),
-            color: Colors.white,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
+      height: height * .70 - 40,
+      top: height * 0.30 + 34,
+      child: Padding(
+        padding:
+            const EdgeInsets.only(right: 16, left: 16, top: 10, bottom: 220),
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Material(
+                elevation: 1,
+                color: Colors.white,
+                child: Column(
                   children: <Widget>[
-                    Text("Check In"),
-                    Text(
-                      "9:00 AM",
-                      style: TextStyle(
-                        color: Color(0xff053150),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
+                    buildBodyCardTitle(title: "Nastavení úrovní"),
+                    buildItem(
+                        link: SectorSettings(), title: "Nastavení priorit"),
                   ],
                 ),
-                Icon(
-                  Icons.access_time,
-                  size: 35,
-                  color: Colors.grey,
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text("Check In"),
-                    Text(
-                      "NOT YET",
-                      style: TextStyle(
-                        color: Color(0xff053150),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildBodyCardTitle({String title}) {
+    return Container(
+      padding: const EdgeInsets.all(15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            title,
+            style: TextStyle(
+              color: Colors.red,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
             ),
           ),
-        ),
+        ],
       ),
     );
   }
 
-  Widget buildFloatingButton(double width, double height) {
-    return Positioned(
-      top: height - 85,
-      width: width,
-      child: Container(
-        height: 70,
-        width: 70,
-        child: RawMaterialButton(
-          shape: CircleBorder(),
-          fillColor: Color(0xff1a9bb1),
-          elevation: 4,
-          onPressed: () {},
-          child: Icon(
-            Icons.menu,
-            size: 35,
-            color: Colors.white,
+  Widget buildItem({icon, link, String title}) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, bottom: 10),
+      child: ListTile(
+        contentPadding: const EdgeInsets.only(left: 10),
+        leading: Container(
+          height: 40,
+          width: 60,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.red,
           ),
         ),
+        title: Text(
+          title,
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => link),
+          );
+        },
       ),
     );
   }
-
 }

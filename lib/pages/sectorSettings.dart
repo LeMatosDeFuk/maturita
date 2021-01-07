@@ -3,12 +3,12 @@ import 'package:M_M_Smart_Home/main.dart';
 import 'package:weather_icons/weather_icons.dart';
 import 'package:http/http.dart' as http;
 
-class History extends StatefulWidget {
+class SectorSettings extends StatefulWidget {
   @override
-  HistoryState createState() => HistoryState();
+  _SectorSettingsState createState() => _SectorSettingsState();
 }
 
-class HistoryState extends State<History> {
+class _SectorSettingsState extends State<SectorSettings> {
   @override
   void initState() {
     super.initState();
@@ -17,32 +17,51 @@ class HistoryState extends State<History> {
   String _url = ProjectSetup.url;
   String _projectTitle = ProjectSetup.projectTitle;
 
+  int _number = 1;
   var response;
+
+  void add(_number) {
+    setState(() {
+      if (_number < 4) _number++;
+    });
+  }
+
+  void minus(_number) {
+    setState(() {
+      if (_number != 1) _number--;
+    });
+  }
 
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      body: Container(
-        width: width,
-        height: height,
-        child: Stack(
-          children: <Widget>[
-            Container(
-              width: width,
-              height: height * .30,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFFFF504A), Color(0xFFFFAEAB)],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
+      appBar: AppBar(
+        title: Text(ProjectSetup.projectTitle),
+        backgroundColor: Colors.red,
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          width: width,
+          height: height,
+          child: Stack(
+            children: <Widget>[
+              Container(
+                width: width,
+                height: height * .30,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFFFF504A), Color(0xFFFFAEAB)],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
                 ),
               ),
-            ),
-            buildHeaderData(height, width),
-            buildNotificationPanel(width, height),
-          ],
+              buildHeaderData(height, width),
+              buildNotificationPanel(width, height),
+            ],
+          ),
         ),
       ),
     );
@@ -71,7 +90,7 @@ class HistoryState extends State<History> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                "Historie",
+                "Nastavení sektorů",
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -90,8 +109,7 @@ class HistoryState extends State<History> {
       height: height * .70 - 40,
       top: height * 0.30 + 34,
       child: Padding(
-        padding:
-        const EdgeInsets.only(right: 16, left: 16, top: 10, bottom: 220),
+        padding: const EdgeInsets.only(right: 16, left: 16, top: 10),
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
@@ -100,7 +118,26 @@ class HistoryState extends State<History> {
                 color: Colors.white,
                 child: Column(
                   children: <Widget>[
-                    buildBodyCardTitle(title: "Historie"),
+                    buildBodyCardTitle(title: "Nastavení priority sektoru 1"),
+                    buildNumberInput("1"),
+                    Divider(
+                      height: 3,
+                      color: Colors.black87,
+                    ),
+                    buildBodyCardTitle(title: "Nastavení priority sektoru 2"),
+                    buildNumberInput("2"),
+                    Divider(
+                      height: 3,
+                      color: Colors.black87,
+                    ),
+                    buildBodyCardTitle(title: "Nastavení priority sektoru 3"),
+                    buildNumberInput("3"),
+                    Divider(
+                      height: 3,
+                      color: Colors.black87,
+                    ),
+                    buildBodyCardTitle(title: "Nastavení priority sektoru 4"),
+                    buildNumberInput("4"),
                   ],
                 ),
               ),
@@ -166,12 +203,40 @@ class HistoryState extends State<History> {
           ),
           child: Center(
               child: Text(
-                sensorValue + additionalSymbol,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.grey,
-                ),
-              )),
+            sensorValue + additionalSymbol,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.grey,
+            ),
+          )),
+        ),
+      ),
+    );
+  }
+
+  Widget buildNumberInput(number) {
+    return Container(
+      height: 50,
+      width: 150,
+      padding: const EdgeInsets.only(top: 10, bottom: 10),
+      child: new Center(
+        child: new Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            new FloatingActionButton(
+              heroTag: "buttonPlus" + number,
+              onPressed: add,
+              child: new Icon(Icons.add, color: Colors.black),
+              backgroundColor: Colors.white,
+            ),
+            new Text('$_number', style: new TextStyle(fontSize: 30.0)),
+            new FloatingActionButton(
+              heroTag: "buttonMinus" + number,
+              onPressed: minus(1),
+              child: new Icon(Icons.remove, color: Colors.black),
+              backgroundColor: Colors.white,
+            ),
+          ],
         ),
       ),
     );

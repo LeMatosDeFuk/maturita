@@ -3,7 +3,6 @@ import 'package:M_M_Smart_Home/main.dart';
 import 'package:weather_icons/weather_icons.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'dart:async';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 
 class Home extends StatefulWidget {
@@ -26,7 +25,6 @@ class _HomeState extends State<Home> {
 
   String _welcomeText = "Dobrý den";
   String _url = ProjectSetup.url;
-  String _projectTitle = ProjectSetup.projectTitle;
 
   String _photoSensorValue = 'Neaktualizováno';
 
@@ -35,7 +33,7 @@ class _HomeState extends State<Home> {
 
   String _waterSensorSymbol = "";
   String _waterSensorValue = 'Neaktualizováno';
-  double _waterSensorData = 0.0;
+  double _waterSensorData = 20.0;
 
   var response;
   IconData timeIcon = WeatherIcons.day_sunny;
@@ -90,28 +88,29 @@ class _HomeState extends State<Home> {
     double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      body: Container(
-        width: width,
-        height: height,
-        child: Stack(
-          children: <Widget>[
-            Container(
-              width: width,
-              height: height * .30,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFFFF504A), Color(0xFFFFAEAB)],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
+      body: SingleChildScrollView(
+        child: Container(
+          width: width,
+          height: height,
+          child: Stack(
+            children: <Widget>[
+              Container(
+                width: width,
+                height: height * .30,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFFFF504A), Color(0xFFFFAEAB)],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
                 ),
               ),
-            ),
-            buildHeader(width, height),
-            buildHeaderData(height, width),
-            buildHeaderInfoCard(height, width),
-            buildFloatingButton(width, height),
-            buildNotificationPanel(width, height),
-          ],
+              buildHeader(width, height),
+              buildHeaderData(height, width),
+              buildHeaderInfoCard(height, width),
+              buildNotificationPanel(width, height),
+            ],
+          ),
         ),
       ),
     );
@@ -152,9 +151,9 @@ class _HomeState extends State<Home> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Container(
-            padding: const EdgeInsets.only(top: 10, bottom: 20),
+            padding: const EdgeInsets.only(top: 10, bottom: 10),
             child: Text(
-              _projectTitle,
+              _welcomeText,
               style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -162,21 +161,10 @@ class _HomeState extends State<Home> {
             ),
           ),
           SizedBox(height: 5),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                _welcomeText,
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16),
-              ),
-            ],
-          ),
           Text(
             "Dnes je " + _formattedDate,
-            style: TextStyle(color: Colors.white70, fontSize: 13),
+            style: TextStyle(
+                color: Colors.white, fontSize: 16),
           ),
         ],
       ),
@@ -243,36 +231,13 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget buildFloatingButton(double width, double height) {
-    return Positioned(
-      top: height - 85,
-      width: width,
-      child: Container(
-        height: 70,
-        width: 70,
-        child: RawMaterialButton(
-          shape: CircleBorder(),
-          fillColor: Color(0xff1a9bb1),
-          elevation: 4,
-          onPressed: () {},
-          child: Icon(
-            Icons.menu,
-            size: 35,
-            color: Colors.white,
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget buildNotificationPanel(double width, double height) {
     return Positioned(
       width: width,
       height: height * .70 - 40,
       top: height * 0.30 + 34,
       child: Padding(
-        padding:
-            const EdgeInsets.only(right: 16, left: 16, top: 10, bottom: 220),
+        padding: const EdgeInsets.only(right: 16, left: 16, top: 10),
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
@@ -432,6 +397,9 @@ class _HomeState extends State<Home> {
             ),
           )),
         ),
+        onTap: () {
+          print('das');
+        },
       ),
     );
   }
