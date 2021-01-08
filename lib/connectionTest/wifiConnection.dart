@@ -31,12 +31,12 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    getInitLedState(); // Getting initial state of LED, which is by default on
+    getInitLedState(); // Získá stav LED, defaultní staav je zapnutý
   }
 
   String _status = '';
   String url =
-      'http://192.168.43.195/'; //IP Address which is configured in NodeMCU Sketch
+      'http://192.168.43.195/'; //IP adresa, na které komunikuje NodeMCU
   var response;
 
   getInitLedState() async {
@@ -46,7 +46,7 @@ class _HomeState extends State<Home> {
         _status = 'zapnuto';
       });
     } catch (e) {
-      // If NodeMCU is not connected, it will throw error
+      // Pokud neproběhne úspěšné připojení, zobrazí chybovou hlášku
       print(e);
       if (this.mounted) {
         setState(() {
@@ -64,7 +64,7 @@ class _HomeState extends State<Home> {
         print(response.body);
       });
     } catch (e) {
-      // If NodeMCU is not connected, it will throw error
+      // Pokud neproběhne úspěšné připojení, zobrazí chybovou hlášku
       print(e);
       displaySnackBar(context, 'Modul neni pripojen');
     }
