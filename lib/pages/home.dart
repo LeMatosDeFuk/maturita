@@ -16,10 +16,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   void initState() {
-    readPhotoSensorData();
-    readDallasSensorData();
-    readWaterSensorData();
-
+    readSensorData();
     super.initState();
   }
 
@@ -29,69 +26,39 @@ class _HomeState extends State<Home> {
   String _welcomeText = "Dobrý den";
 
   String _photoSensorValue = 'Neaktualizováno';
+  String _temperatureSensorValue = 'Neaktualizováno';
+  String _humiditySensorValue = 'Neaktualizováno';
 
-  String _dallasSensorValue = 'Neaktualizováno';
-  String _dallasSensorSymbol = "";
-
-  String _waterSensorSymbol = "";
-  String _waterSensorValue = 'Neaktualizováno';
+  // Zkusebni data
   double _waterSensorData = 20.0;
+  String _waterSensorValue = 'Neaktualizováno';
 
   var response;
   IconData timeIcon = WeatherIcons.day_sunny;
 
-  readPhotoSensorData() async {
+  readSensorData() async {
     try {
       response =
           await http.get(readFrom, headers: {"Accept": "application/json"});
 
       var jsonResponse = json.decode(response.body);
-      print(jsonResponse);
 
       setState(() {
-        double photoSensorData = double.parse(jsonResponse['lighting']);
-        _photoSensorValue = photoSensorData.toString();
+        _humiditySensorValue = jsonResponse['humidity'] + "%";
+        _temperatureSensorValue = jsonResponse['temperature'] + " \u2103";
+        _photoSensorValue = jsonResponse['lighting'];
+        double _photoSensorData = double.parse(jsonResponse['lighting']);
 
-        if (photoSensorData < 300.00) {
+        if (_photoSensorData < 300.00) {
           timeIcon = WeatherIcons.night_clear;
           _welcomeText = "Dobrý večer";
         }
       });
     } catch (e) {
+      print(e);
+      _humiditySensorValue = 'Nelze načíst data';
       _photoSensorValue = 'Nelze načíst data';
-    }
-  }
-
-  readDallasSensorData() async {
-    try {
-      response =
-          await http.get(readFrom, headers: {"Accept": "application/json"});
-
-      var jsonResponse = json.decode(response.body);
-      print(jsonResponse);
-      setState(() {
-        _dallasSensorSymbol = " \u2103";
-        _dallasSensorValue = jsonResponse['temperature'];
-      });
-    } catch (e) {
-      _photoSensorValue = 'Nelze načíst data';
-    }
-  }
-
-  readWaterSensorData() async {
-    try {
-      response =
-          await http.get(readFrom, headers: {"Accept": "application/json"});
-
-      var jsonResponse = json.decode(response.body);
-      print(jsonResponse);
-      setState(() {
-        _waterSensorValue = jsonResponse['humidity'];
-        double _waterSensorData = double.parse(_waterSensorValue);
-        _waterSensorSymbol = "%";
-      });
-    } catch (e) {
-      _waterSensorValue = 'Nelze načíst data';
+      _temperatureSensorValue = 'Nelze načíst data';
     }
   }
 
@@ -270,8 +237,7 @@ class _HomeState extends State<Home> {
                     buildNotificationItem(
                         icon: WeatherIcons.day_sunny,
                         itemTitle: "Intenzita světla",
-                        sensorValue: _photoSensorValue,
-                        additionalSymbol: ""),
+                        sensorValue: _photoSensorValue),
                     Divider(
                       height: 3,
                       color: Colors.black87,
@@ -279,8 +245,7 @@ class _HomeState extends State<Home> {
                     buildNotificationItem(
                         icon: WeatherIcons.humidity,
                         itemTitle: "Vlhkost",
-                        sensorValue: _photoSensorValue,
-                        additionalSymbol: ""),
+                        sensorValue: _humiditySensorValue),
                     Divider(
                       height: 3,
                       color: Colors.black87,
@@ -288,8 +253,7 @@ class _HomeState extends State<Home> {
                     buildNotificationItem(
                         icon: WeatherIcons.thermometer,
                         itemTitle: "Teplota",
-                        sensorValue: _dallasSensorValue,
-                        additionalSymbol: _dallasSensorSymbol),
+                        sensorValue: _temperatureSensorValue),
                   ],
                 ),
               ),
@@ -348,7 +312,7 @@ class _HomeState extends State<Home> {
                     borderWidth: 4.0,
                     direction: Axis.vertical,
                     center: Text(
-                      _waterSensorValue.toString() + _waterSensorSymbol,
+                      _waterSensorValue,
                       style: TextStyle(
                           fontSize: 12.0,
                           fontWeight: FontWeight.w600,
@@ -362,8 +326,7 @@ class _HomeState extends State<Home> {
         ));
   }
 
-  Widget buildNotificationItem(
-      {icon, String itemTitle, sensorValue, additionalSymbol}) {
+  Widget buildNotificationItem({icon, String itemTitle, sensorValue}) {
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 10),
       child: ListTile(
@@ -397,7 +360,7 @@ class _HomeState extends State<Home> {
           ),
           child: Center(
               child: Text(
-            sensorValue + additionalSymbol,
+            sensorValue,
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.grey,
