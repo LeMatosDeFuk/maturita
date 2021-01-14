@@ -1,7 +1,36 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:M_M_Smart_Home/main.dart';
 import 'package:weather_icons/weather_icons.dart';
 import 'package:http/http.dart' as http;
+
+import '../sectorSettingsModel.dart';
+
+Future<SectorSettingsModel> createSettings(
+    sector1, sector2, sector3, sector4) async {
+  final String apiUrl = ProjectSetup.url + "api/sectors";
+
+  final response = await http.post(apiUrl, body: {
+    "sector1": sector1,
+    "sector2": sector2,
+    "sector3": sector3,
+    "sector4": sector4
+  });
+
+  if (response.statusCode == 200) {
+    final String responseMessage =
+        "Nastavení bylo úspěšně uloženo"; // POTREBA DOIMPLEMENTOVAT
+    final String responseBody = response.body;
+
+    return sectorSettingsModelFromJson(responseBody);
+  } else {
+    final String responseMessage =
+        "Něco se pokazilo"; // POTREBA DOIMPLEMENTOVAT
+
+    return null;
+  }
+}
 
 class SectorSettings extends StatefulWidget {
   @override
@@ -13,6 +42,9 @@ class _SectorSettingsState extends State<SectorSettings> {
   void initState() {
     super.initState();
   }
+
+  SectorSettingsModel _settings = sectorSettingsModelFromJson(jsonEncode(
+      {"sector1": "1", "sector2": "2", "sector3": "3", "sector4": "4"}));
 
   String _url = ProjectSetup.url;
   String _projectTitle = ProjectSetup.projectTitle;
@@ -164,6 +196,32 @@ class _SectorSettingsState extends State<SectorSettings> {
                   ],
                 ),
               ),
+              Divider(height: 30, color: Colors.transparent),
+              FlatButton(
+                padding: const EdgeInsets.only(top: 10, bottom: 10),
+                onPressed: () async {
+                  final String sector1 = _first.toString();
+                  final String sector2 = _second.toString();
+                  final String sector3 = _third.toString();
+                  final String sector4 = _fourth.toString();
+
+                  final SectorSettingsModel settings =
+                      await createSettings(sector1, sector2, sector3, sector4);
+
+                  setState(() {
+                    _settings = settings;
+                  });
+                },
+                child: Text(
+                  'Uložit',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                color: Colors.red,
+              )
             ],
           ),
         ),
@@ -247,16 +305,16 @@ class _SectorSettingsState extends State<SectorSettings> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             new FloatingActionButton(
-              heroTag: "buttonPlus" + number,
-              onPressed: () => add(variable, number),
-              child: new Icon(Icons.add, color: Colors.black),
+              heroTag: "buttonMinus" + number,
+              onPressed: () => minus(variable, number),
+              child: new Icon(Icons.remove, color: Colors.black),
               backgroundColor: Colors.white,
             ),
             new Text('$variable', style: new TextStyle(fontSize: 30.0)),
             new FloatingActionButton(
-              heroTag: "buttonMinus" + number,
-              onPressed: () => minus(variable, number),
-              child: new Icon(Icons.remove, color: Colors.black),
+              heroTag: "buttonPlus" + number,
+              onPressed: () => add(variable, number),
+              child: new Icon(Icons.add, color: Colors.black),
               backgroundColor: Colors.white,
             ),
           ],

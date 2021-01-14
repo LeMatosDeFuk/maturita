@@ -96,7 +96,7 @@ class _HomeState extends State<Home> {
             children: <Widget>[
               Container(
                 width: width,
-                height: height * .30,
+                height: height * .20,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [Color(0xFFFF504A), Color(0xFFFFAEAB)],
@@ -121,7 +121,7 @@ class _HomeState extends State<Home> {
       top: 30,
       child: Container(
         width: width,
-        height: height * .30,
+        height: height * .20,
         child: Column(
           children: <Widget>[
             Padding(
@@ -144,7 +144,7 @@ class _HomeState extends State<Home> {
 
   Widget buildHeaderData(double height, double width) {
     return Positioned(
-      top: (height * .30) / 2 - 40,
+      top: (height * .20) / 2 - 40,
       width: width,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -173,7 +173,7 @@ class _HomeState extends State<Home> {
 
   Widget buildHeaderInfoCard(double height, double width) {
     return Positioned(
-      top: height * .30 - 25,
+      top: height * .20 - 25,
       width: width,
       child: Container(
         alignment: Alignment.center,
@@ -235,7 +235,7 @@ class _HomeState extends State<Home> {
     return Positioned(
       width: width,
       height: height * .70 - 40,
-      top: height * 0.30 + 34,
+      top: height * 0.20 + 34,
       child: Padding(
         padding: const EdgeInsets.only(right: 16, left: 16, top: 10),
         child: SingleChildScrollView(
@@ -279,10 +279,6 @@ class _HomeState extends State<Home> {
                         itemTitle: "Teplota",
                         sensorValue: _dallasSensorValue,
                         additionalSymbol: _dallasSensorSymbol),
-                    Divider(
-                      height: 3,
-                      color: Colors.black87,
-                    ),
                   ],
                 ),
               ),
@@ -397,9 +393,6 @@ class _HomeState extends State<Home> {
             ),
           )),
         ),
-        onTap: () {
-          print('das');
-        },
       ),
     );
   }

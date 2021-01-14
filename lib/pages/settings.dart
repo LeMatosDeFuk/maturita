@@ -33,7 +33,7 @@ class SettingsState extends State<Settings> {
             children: <Widget>[
               Container(
                 width: width,
-                height: height * .30,
+                height: height * .20,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [Color(0xFFFF504A), Color(0xFFFFAEAB)],
@@ -53,7 +53,7 @@ class SettingsState extends State<Settings> {
 
   Widget buildHeaderData(double height, double width) {
     return Positioned(
-      top: (height * .30) / 2 - 40,
+      top: (height * .20) / 2 - 40,
       width: width,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -74,7 +74,7 @@ class SettingsState extends State<Settings> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                "Nastavení úrovní",
+                "Nastavení",
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -91,7 +91,7 @@ class SettingsState extends State<Settings> {
     return Positioned(
       width: width,
       height: height * .70 - 40,
-      top: height * 0.30 + 34,
+      top: height * 0.20 + 34,
       child: Padding(
         padding:
             const EdgeInsets.only(right: 16, left: 16, top: 10, bottom: 220),
@@ -103,9 +103,18 @@ class SettingsState extends State<Settings> {
                 color: Colors.white,
                 child: Column(
                   children: <Widget>[
-                    buildBodyCardTitle(title: "Nastavení úrovní"),
                     buildItem(
-                        link: SectorSettings(), title: "Nastavení priorit"),
+                        link: SectorSettings(),
+                        title: "Nastavení priorit",
+                        color: Colors.red),
+                    Divider(
+                      height: 3,
+                      color: Colors.black87,
+                    ),
+                    buildItem(
+                        link: SectorSettings(),
+                        title: "Nastavení zalévání",
+                        color: Colors.amber),
                   ],
                 ),
               ),
@@ -136,7 +145,7 @@ class SettingsState extends State<Settings> {
     );
   }
 
-  Widget buildItem({icon, link, String title}) {
+  Widget buildItem({icon, link, String title, color}) {
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 10),
       child: ListTile(
@@ -146,7 +155,7 @@ class SettingsState extends State<Settings> {
           width: 60,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Colors.red,
+            color: color,
           ),
         ),
         title: Text(
