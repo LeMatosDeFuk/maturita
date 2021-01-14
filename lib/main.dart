@@ -1,10 +1,10 @@
 import 'package:M_M_Smart_Home/pages/settings.dart';
-import 'package:M_M_Smart_Home/pages/sectorSettings.dart';
+import 'file:///C:/Users/matce/AndroidStudioProjects/maturita/lib/pages/settings/levelSettings.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:M_M_Smart_Home/pages/history.dart';
 import 'package:M_M_Smart_Home/pages/home.dart';
-import 'package:M_M_Smart_Home/pages/sectorSettings.dart';
+import 'file:///C:/Users/matce/AndroidStudioProjects/maturita/lib/pages/settings/levelSettings.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -27,7 +27,7 @@ class Main extends StatefulWidget {
 class _MainState extends State<Main> {
   BuildContext scaffoldContext;
   PageController _pageController = PageController();
-  List<Widget> _screens = [Home(), Settings(), History(), SectorSettings()];
+  List<Widget> _screens = [Home(), Settings(), History()];
 
   int _selectedIndex = 0;
 

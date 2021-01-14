@@ -5,12 +5,24 @@ import 'package:M_M_Smart_Home/main.dart';
 import 'package:weather_icons/weather_icons.dart';
 import 'package:http/http.dart' as http;
 
-class SectorSettings extends StatefulWidget {
+class LevelSettings extends StatefulWidget {
   @override
-  _SectorSettingsState createState() => _SectorSettingsState();
+  _LevelSettingsState createState() => _LevelSettingsState();
 }
 
-class _SectorSettingsState extends State<SectorSettings> {
+class _LevelSettingsState extends State<LevelSettings> {
+  TimeOfDay _time = TimeOfDay.now();
+  TimeOfDay picked;
+
+  Future<Null> selectTime(BuildContext context) async {
+    picked = await showTimePicker(context: context, initialTime: _time);
+
+    setState(() {
+      _time = picked;
+      print(_time);
+    });
+  }
+
   final String apiUrl = ProjectSetup.url + "sector-levels";
 
   @override
@@ -46,7 +58,7 @@ class _SectorSettingsState extends State<SectorSettings> {
   getDataFromServer() async {
     try {
       response =
-          await http.get(apiUrl, headers: {"Accept": "application/json"});
+      await http.get(apiUrl, headers: {"Accept": "application/json"});
 
       var jsonResponse = json.decode(response.body);
 
@@ -110,7 +122,7 @@ class _SectorSettingsState extends State<SectorSettings> {
             children: <Widget>[
               Container(
                 width: width,
-                height: height * .30,
+                height: height * .20,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [Color(0xFFFF504A), Color(0xFFFFAEAB)],
@@ -130,32 +142,22 @@ class _SectorSettingsState extends State<SectorSettings> {
 
   Widget buildHeaderData(double height, double width) {
     return Positioned(
-      top: (height * .30) / 2 - 40,
+      top: (height * .20) / 2 - 20,
       width: width,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Container(
-            padding: const EdgeInsets.only(top: 10, bottom: 20),
-            child: Text(
-              _projectTitle,
-              style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30),
-            ),
-          ),
           SizedBox(height: 5),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                "Nastavení sektorů",
+                "Nastavení priorit",
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: 16),
+                    fontSize: 30),
               ),
             ],
           ),
@@ -168,7 +170,7 @@ class _SectorSettingsState extends State<SectorSettings> {
     return Positioned(
       width: width,
       height: height * .70 - 40,
-      top: height * 0.30 + 34,
+      top: height * 0.20 + 34,
       child: Padding(
         padding: const EdgeInsets.only(right: 16, left: 16, top: 10),
         child: SingleChildScrollView(
@@ -179,30 +181,30 @@ class _SectorSettingsState extends State<SectorSettings> {
                 color: Colors.white,
                 child: Column(
                   children: <Widget>[
-                    buildBodyCardTitle(title: "Nastavení priority sektoru 1"),
+                    buildBodyCardTitle(title: "Sektor 1"),
                     buildNumberInput("1", _first),
                     Divider(
                       height: 3,
                       color: Colors.black87,
                     ),
-                    buildBodyCardTitle(title: "Nastavení priority sektoru 2"),
+                    buildBodyCardTitle(title: "Sektor 2"),
                     buildNumberInput("2", _second),
                     Divider(
                       height: 3,
                       color: Colors.black87,
                     ),
-                    buildBodyCardTitle(title: "Nastavení priority sektoru 3"),
+                    buildBodyCardTitle(title: "Sektor 3"),
                     buildNumberInput("3", _third),
                     Divider(
                       height: 3,
                       color: Colors.black87,
                     ),
-                    buildBodyCardTitle(title: "Nastavení priority sektoru 4"),
+                    buildBodyCardTitle(title: "Sektor 4"),
                     buildNumberInput("4", _fourth),
                   ],
                 ),
               ),
-              Divider(height: 30, color: Colors.transparent),
+              Divider(height: 20, color: Colors.transparent),
               FlatButton(
                 padding: const EdgeInsets.only(top: 10, bottom: 10),
                 onPressed: () => sendDataToServer(),
@@ -227,7 +229,7 @@ class _SectorSettingsState extends State<SectorSettings> {
     return Container(
       padding: const EdgeInsets.all(15),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Text(
@@ -278,12 +280,12 @@ class _SectorSettingsState extends State<SectorSettings> {
           ),
           child: Center(
               child: Text(
-            sensorValue + additionalSymbol,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.grey,
-            ),
-          )),
+                sensorValue + additionalSymbol,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.grey,
+                ),
+              )),
         ),
       ),
     );
@@ -305,7 +307,7 @@ class _SectorSettingsState extends State<SectorSettings> {
                 child: new Icon(Icons.remove, color: Colors.black),
                 backgroundColor: Colors.white,
               ),
-              new Text('$variable', style: new TextStyle(fontSize: 30.0)),
+              new Text('$variable', style: new TextStyle(fontSize: 20.0)),
               new FloatingActionButton(
                 heroTag: "buttonPlus" + number,
                 onPressed: () => add(variable, number),
@@ -323,12 +325,12 @@ class _SectorSettingsState extends State<SectorSettings> {
         padding: const EdgeInsets.only(top: 10, bottom: 10),
         child: Center(
             child: Text(
-          _error,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Colors.grey,
-          ),
-        )),
+              _error,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.grey,
+              ),
+            )),
       );
     }
   }
