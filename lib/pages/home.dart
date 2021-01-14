@@ -4,6 +4,9 @@ import 'package:weather_icons/weather_icons.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
+import 'dart:convert';
+
+final String readFrom = ProjectSetup.url + "get-data";
 
 class Home extends StatefulWidget {
   @override
@@ -24,7 +27,6 @@ class _HomeState extends State<Home> {
       DateFormat('dd.MM.yyyy kk:mm').format(DateTime.now().toUtc());
 
   String _welcomeText = "Dobrý den";
-  String _url = ProjectSetup.url;
 
   String _photoSensorValue = 'Neaktualizováno';
 
@@ -40,10 +42,14 @@ class _HomeState extends State<Home> {
 
   readPhotoSensorData() async {
     try {
-      response = await http
-          .get(_url + 'photo-sensor', headers: {"Accept": "plain/text"});
+      response =
+          await http.get(readFrom, headers: {"Accept": "application/json"});
+
+      var jsonResponse = json.decode(response.body);
+      print(jsonResponse);
+
       setState(() {
-        double photoSensorData = double.parse(response.body);
+        double photoSensorData = double.parse(jsonResponse['lighting']);
         _photoSensorValue = photoSensorData.toString();
 
         if (photoSensorData < 300.00) {
@@ -58,11 +64,14 @@ class _HomeState extends State<Home> {
 
   readDallasSensorData() async {
     try {
-      response = await http
-          .get(_url + 'dallas-sensor', headers: {"Accept": "plain/text"});
+      response =
+          await http.get(readFrom, headers: {"Accept": "application/json"});
+
+      var jsonResponse = json.decode(response.body);
+      print(jsonResponse);
       setState(() {
         _dallasSensorSymbol = " \u2103";
-        _dallasSensorValue = response.body;
+        _dallasSensorValue = jsonResponse['temperature'];
       });
     } catch (e) {
       _photoSensorValue = 'Nelze načíst data';
@@ -71,10 +80,13 @@ class _HomeState extends State<Home> {
 
   readWaterSensorData() async {
     try {
-      response = await http
-          .get(_url + 'water-sensor', headers: {"Accept": "plain/text"});
+      response =
+          await http.get(readFrom, headers: {"Accept": "application/json"});
+
+      var jsonResponse = json.decode(response.body);
+      print(jsonResponse);
       setState(() {
-        _waterSensorValue = response.body;
+        _waterSensorValue = jsonResponse['humidity'];
         double _waterSensorData = double.parse(_waterSensorValue);
         _waterSensorSymbol = "%";
       });
@@ -163,8 +175,7 @@ class _HomeState extends State<Home> {
           SizedBox(height: 5),
           Text(
             "Dnes je " + _formattedDate,
-            style: TextStyle(
-                color: Colors.white, fontSize: 16),
+            style: TextStyle(color: Colors.white, fontSize: 16),
           ),
         ],
       ),

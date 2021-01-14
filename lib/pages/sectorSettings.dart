@@ -5,32 +5,7 @@ import 'package:M_M_Smart_Home/main.dart';
 import 'package:weather_icons/weather_icons.dart';
 import 'package:http/http.dart' as http;
 
-import '../sectorSettingsModel.dart';
-
-Future<SectorSettingsModel> createSettings(
-    sector1, sector2, sector3, sector4) async {
-  final String apiUrl = ProjectSetup.url + "api/sectors";
-
-  final response = await http.post(apiUrl, body: {
-    "sector1": sector1,
-    "sector2": sector2,
-    "sector3": sector3,
-    "sector4": sector4
-  });
-
-  if (response.statusCode == 200) {
-    final String responseMessage =
-        "Nastavení bylo úspěšně uloženo"; // POTREBA DOIMPLEMENTOVAT
-    final String responseBody = response.body;
-
-    return sectorSettingsModelFromJson(responseBody);
-  } else {
-    final String responseMessage =
-        "Něco se pokazilo"; // POTREBA DOIMPLEMENTOVAT
-
-    return null;
-  }
-}
+final String apiUrl = ProjectSetup.url + "sectors";
 
 class SectorSettings extends StatefulWidget {
   @override
@@ -43,10 +18,6 @@ class _SectorSettingsState extends State<SectorSettings> {
     super.initState();
   }
 
-  SectorSettingsModel _settings = sectorSettingsModelFromJson(jsonEncode(
-      {"sector1": "1", "sector2": "2", "sector3": "3", "sector4": "4"}));
-
-  String _url = ProjectSetup.url;
   String _projectTitle = ProjectSetup.projectTitle;
 
   int _first = 1;
@@ -55,6 +26,20 @@ class _SectorSettingsState extends State<SectorSettings> {
   int _fourth = 1;
 
   var response;
+
+  void sendDataToServer() {
+    http.post(apiUrl, headers: {
+      'Accept': 'application/json; charset=UTF-8',
+    }, body: {
+      "sector1": _first.toString(),
+      "sector2": _second.toString(),
+      "sector3": _third.toString(),
+      "sector4": _fourth.toString(),
+    }).then((response) {
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    });
+  }
 
   void add(number, numberVariable) {
     setState(() {
@@ -199,19 +184,7 @@ class _SectorSettingsState extends State<SectorSettings> {
               Divider(height: 30, color: Colors.transparent),
               FlatButton(
                 padding: const EdgeInsets.only(top: 10, bottom: 10),
-                onPressed: () async {
-                  final String sector1 = _first.toString();
-                  final String sector2 = _second.toString();
-                  final String sector3 = _third.toString();
-                  final String sector4 = _fourth.toString();
-
-                  final SectorSettingsModel settings =
-                      await createSettings(sector1, sector2, sector3, sector4);
-
-                  setState(() {
-                    _settings = settings;
-                  });
-                },
+                onPressed: () => sendDataToServer(),
                 child: Text(
                   'Uložit',
                   style: TextStyle(

@@ -15,7 +15,7 @@ void main() {
 }
 
 class ProjectSetup {
-  static String url = 'http://192.168.137.1/';
+  static String url = 'http://192.168.137.1/laravel/maturita-web/api/';
   static String projectTitle = "M&M Smart Home";
 }
 
