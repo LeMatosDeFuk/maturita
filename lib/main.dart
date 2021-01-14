@@ -15,7 +15,7 @@ void main() {
 }
 
 class ProjectSetup {
-  static String url = 'http://192.168.43.82/';
+  static String url = 'http://192.168.137.1/';
   static String projectTitle = "M&M Smart Home";
 }
 
