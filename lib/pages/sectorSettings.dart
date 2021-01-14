@@ -5,20 +5,22 @@ import 'package:M_M_Smart_Home/main.dart';
 import 'package:weather_icons/weather_icons.dart';
 import 'package:http/http.dart' as http;
 
-final String apiUrl = ProjectSetup.url + "sectors";
-
 class SectorSettings extends StatefulWidget {
   @override
   _SectorSettingsState createState() => _SectorSettingsState();
 }
 
 class _SectorSettingsState extends State<SectorSettings> {
+  final String apiUrl = ProjectSetup.url + "sector-levels";
+
   @override
   void initState() {
+    getDataFromServer();
     super.initState();
   }
 
   String _projectTitle = ProjectSetup.projectTitle;
+  String _error = null;
 
   int _first = 1;
   int _second = 1;
@@ -31,14 +33,33 @@ class _SectorSettingsState extends State<SectorSettings> {
     http.post(apiUrl, headers: {
       'Accept': 'application/json; charset=UTF-8',
     }, body: {
-      "sector1": _first.toString(),
-      "sector2": _second.toString(),
-      "sector3": _third.toString(),
-      "sector4": _fourth.toString(),
+      "sector1Level": _first.toString(),
+      "sector2Level": _second.toString(),
+      "sector3Level": _third.toString(),
+      "sector4Level": _fourth.toString(),
     }).then((response) {
       print('Response status: ${response.statusCode}');
       print('Response body: ${response.body}');
     });
+  }
+
+  getDataFromServer() async {
+    try {
+      response =
+          await http.get(apiUrl, headers: {"Accept": "application/json"});
+
+      var jsonResponse = json.decode(response.body);
+
+      setState(() {
+        _first = int.parse(jsonResponse[0]['level']);
+        _second = int.parse(jsonResponse[1]['level']);
+        _third = int.parse(jsonResponse[2]['level']);
+        _fourth = int.parse(jsonResponse[3]['level']);
+      });
+    } catch (e) {
+      print(e);
+      _error = 'Nelze načíst data';
+    }
   }
 
   void add(number, numberVariable) {
@@ -269,30 +290,46 @@ class _SectorSettingsState extends State<SectorSettings> {
   }
 
   Widget buildNumberInput(number, variable) {
-    return Container(
-      height: 50,
-      width: 150,
-      padding: const EdgeInsets.only(top: 10, bottom: 10),
-      child: new Center(
-        child: new Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            new FloatingActionButton(
-              heroTag: "buttonMinus" + number,
-              onPressed: () => minus(variable, number),
-              child: new Icon(Icons.remove, color: Colors.black),
-              backgroundColor: Colors.white,
-            ),
-            new Text('$variable', style: new TextStyle(fontSize: 30.0)),
-            new FloatingActionButton(
-              heroTag: "buttonPlus" + number,
-              onPressed: () => add(variable, number),
-              child: new Icon(Icons.add, color: Colors.black),
-              backgroundColor: Colors.white,
-            ),
-          ],
+    if (_error == null) {
+      return Container(
+        height: 50,
+        width: 150,
+        padding: const EdgeInsets.only(top: 10, bottom: 10),
+        child: new Center(
+          child: new Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              new FloatingActionButton(
+                heroTag: "buttonMinus" + number,
+                onPressed: () => minus(variable, number),
+                child: new Icon(Icons.remove, color: Colors.black),
+                backgroundColor: Colors.white,
+              ),
+              new Text('$variable', style: new TextStyle(fontSize: 30.0)),
+              new FloatingActionButton(
+                heroTag: "buttonPlus" + number,
+                onPressed: () => add(variable, number),
+                child: new Icon(Icons.add, color: Colors.black),
+                backgroundColor: Colors.white,
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      return Container(
+        height: 50,
+        width: 150,
+        padding: const EdgeInsets.only(top: 10, bottom: 10),
+        child: Center(
+            child: Text(
+          _error,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.grey,
+          ),
+        )),
+      );
+    }
   }
 }

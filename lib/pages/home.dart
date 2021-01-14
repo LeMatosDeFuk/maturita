@@ -6,14 +6,14 @@ import 'package:intl/intl.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'dart:convert';
 
-final String readFrom = ProjectSetup.url + "get-data";
-
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
+  final String sensorDataUrl = ProjectSetup.url + "sensor-data";
+
   @override
   void initState() {
     readSensorData();
@@ -31,7 +31,7 @@ class _HomeState extends State<Home> {
 
   // Zkusebni data
   double _waterSensorData = 20.0;
-  String _waterSensorValue = 'Neaktualizováno';
+  String _waterSensorValue = '20%';
 
   var response;
   IconData timeIcon = WeatherIcons.day_sunny;
@@ -39,13 +39,13 @@ class _HomeState extends State<Home> {
   readSensorData() async {
     try {
       response =
-          await http.get(readFrom, headers: {"Accept": "application/json"});
+          await http.get(sensorDataUrl, headers: {"Accept": "application/json"});
 
       var jsonResponse = json.decode(response.body);
 
       setState(() {
         _humiditySensorValue = jsonResponse['humidity'] + "%";
-        _temperatureSensorValue = jsonResponse['temperature'] + " \u2103";
+        _temperatureSensorValue = jsonResponse['temperature'] + "\u2103";
         _photoSensorValue = jsonResponse['lighting'];
         double _photoSensorData = double.parse(jsonResponse['lighting']);
 
