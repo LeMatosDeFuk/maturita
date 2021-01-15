@@ -16,6 +16,7 @@ dependencies:
   liquid_progress_indicator: ^0.3.2
   weather_icons: 2.0.2
   intl: ^0.16.1
+  toggle_switch: "^0.1.8"
   flutter:
     sdk: flutter
 

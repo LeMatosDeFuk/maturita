@@ -11,18 +11,6 @@ class LevelSettings extends StatefulWidget {
 }
 
 class _LevelSettingsState extends State<LevelSettings> {
-  TimeOfDay _time = TimeOfDay.now();
-  TimeOfDay picked;
-
-  Future<Null> selectTime(BuildContext context) async {
-    picked = await showTimePicker(context: context, initialTime: _time);
-
-    setState(() {
-      _time = picked;
-      print(_time);
-    });
-  }
-
   final String apiUrl = ProjectSetup.url + "sector-levels";
 
   @override
@@ -31,7 +19,6 @@ class _LevelSettingsState extends State<LevelSettings> {
     super.initState();
   }
 
-  String _projectTitle = ProjectSetup.projectTitle;
   String _error = null;
 
   int _first = 1;
@@ -41,7 +28,7 @@ class _LevelSettingsState extends State<LevelSettings> {
 
   var response;
 
-  void sendDataToServer() {
+  sendDataToServer() {
     http.post(apiUrl, headers: {
       'Accept': 'application/json; charset=UTF-8',
     }, body: {
@@ -53,12 +40,14 @@ class _LevelSettingsState extends State<LevelSettings> {
       print('Response status: ${response.statusCode}');
       print('Response body: ${response.body}');
     });
+
+    return response.statusCode;
   }
 
   getDataFromServer() async {
     try {
       response =
-      await http.get(apiUrl, headers: {"Accept": "application/json"});
+          await http.get(apiUrl, headers: {"Accept": "application/json"});
 
       var jsonResponse = json.decode(response.body);
 
@@ -205,19 +194,31 @@ class _LevelSettingsState extends State<LevelSettings> {
                 ),
               ),
               Divider(height: 20, color: Colors.transparent),
-              FlatButton(
-                padding: const EdgeInsets.only(top: 10, bottom: 10),
-                onPressed: () => sendDataToServer(),
-                child: Text(
-                  'Uložit',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                color: Colors.red,
-              )
+              Builder(
+                builder: (BuildContext context) {
+                  return Center(
+                    child: FlatButton(
+                      padding: const EdgeInsets.only(top: 10, bottom: 10),
+                      onPressed: () {
+                        if (sendDataToServer() == 200) {
+                          Scaffold.of(context).showSnackBar(SnackBar(
+                            content: Text('Úspěšně uloženo'),
+                          ));
+                        }
+                      },
+                      child: Text(
+                        'Uložit',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      color: Colors.red,
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         ),
@@ -280,12 +281,12 @@ class _LevelSettingsState extends State<LevelSettings> {
           ),
           child: Center(
               child: Text(
-                sensorValue + additionalSymbol,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.grey,
-                ),
-              )),
+            sensorValue + additionalSymbol,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.grey,
+            ),
+          )),
         ),
       ),
     );
@@ -325,12 +326,12 @@ class _LevelSettingsState extends State<LevelSettings> {
         padding: const EdgeInsets.only(top: 10, bottom: 10),
         child: Center(
             child: Text(
-              _error,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.grey,
-              ),
-            )),
+          _error,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.grey,
+          ),
+        )),
       );
     }
   }
