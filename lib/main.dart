@@ -1,10 +1,8 @@
 import 'package:M_M_Smart_Home/pages/settings.dart';
-import 'file:///C:/Users/matce/AndroidStudioProjects/maturita/lib/pages/settings/levelSettings.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:M_M_Smart_Home/pages/history.dart';
 import 'package:M_M_Smart_Home/pages/home.dart';
-import 'file:///C:/Users/matce/AndroidStudioProjects/maturita/lib/pages/settings/levelSettings.dart';
 
 void main() {
   runApp(MaterialApp(

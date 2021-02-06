@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:M_M_Smart_Home/main.dart';
+import 'package:flutter/services.dart';
 import 'package:weather_icons/weather_icons.dart';
 import 'package:http/http.dart' as http;
 import 'package:toggle_switch/toggle_switch.dart';
@@ -86,6 +87,22 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               _error != null
                   ? buildNotificationPanel(width, height)
                   : buildError(width, height),
+              Divider(
+                height: 3,
+                color: Colors.black87,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  new TextField(
+                    decoration: new InputDecoration(labelText: "Enter your number"),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly
+                    ], // Only numbers can be entered
+                  ),
+                ],
+              )
             ],
           ),
         ),
@@ -131,7 +148,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               Material(
                 child: Column(
                   children: <Widget>[
-                    buildBodyCardTitle(title: "Kontrolovat stav ráno (6:00)"),
+                    buildBodyCardTitle(title: "Kontrolovat stav ráno (16:00)"),
                     ToggleSwitch(
                       minWidth: 90.0,
                       initialLabelIndex: _morning == false ? 0 : 1,
