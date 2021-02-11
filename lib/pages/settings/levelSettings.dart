@@ -101,7 +101,7 @@ class _LevelSettingsState extends State<LevelSettings> {
     return Scaffold(
       appBar: AppBar(
         title: Text(ProjectSetup.projectTitle),
-        backgroundColor: Colors.red,
+        backgroundColor: Colors.blue,
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -114,7 +114,7 @@ class _LevelSettingsState extends State<LevelSettings> {
                 height: height * .20,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Color(0xFFFF504A), Color(0xFFFFAEAB)],
+                    colors: [Color(0xFF2196F3), Color(0xFFD3E6F3)],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                   ),
@@ -214,7 +214,7 @@ class _LevelSettingsState extends State<LevelSettings> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      color: Colors.red,
+                      color: Colors.blue,
                     ),
                   );
                 },
@@ -236,7 +236,7 @@ class _LevelSettingsState extends State<LevelSettings> {
           Text(
             title,
             style: TextStyle(
-              color: Colors.red,
+              color: Colors.blue,
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -257,7 +257,7 @@ class _LevelSettingsState extends State<LevelSettings> {
           width: 60,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Colors.red,
+            color: Colors.blue,
           ),
           child: BoxedIcon(
             icon,

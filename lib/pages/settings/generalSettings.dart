@@ -2,10 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:M_M_Smart_Home/main.dart';
-import 'package:flutter/services.dart';
-import 'package:weather_icons/weather_icons.dart';
 import 'package:http/http.dart' as http;
 import 'package:toggle_switch/toggle_switch.dart';
+import 'package:numberpicker/numberpicker.dart';
 
 class GeneralSettings extends StatefulWidget {
   @override
@@ -13,6 +12,7 @@ class GeneralSettings extends StatefulWidget {
 }
 
 class _GeneralSettingsState extends State<GeneralSettings> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   static const IconData check = IconData(0xe64c, fontFamily: 'MaterialIcons');
   final String apiUrl = ProjectSetup.url + "general-settings";
 
@@ -22,23 +22,27 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     super.initState();
   }
 
-  String _error = null;
+  String _error;
 
   bool _morning = false;
   bool _evening = false;
+  int _currentHumidity = 50;
 
   var response;
 
-  void sendDataToServer() {
+  sendDataToServer() {
     http.post(apiUrl, headers: {
       'Accept': 'application/json; charset=UTF-8',
     }, body: {
       "checkMorning": _morning.toString(),
       "checkEvening": _evening.toString(),
+      "humidity": _currentHumidity
     }).then((response) {
       print('Response status: ${response.statusCode}');
       print('Response body: ${response.body}');
     });
+
+    return response.statusCode;
   }
 
   getDataFromServer() async {
@@ -62,9 +66,10 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     double height = MediaQuery.of(context).size.height;
     _error = 'Nelze načíst data';
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(ProjectSetup.projectTitle),
-        backgroundColor: Colors.red,
+        backgroundColor: Colors.blue,
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -77,7 +82,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                 height: height * .20,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Color(0xFFFF504A), Color(0xFFFFAEAB)],
+                    colors: [Color(0xFF2196F3), Color(0xFFD3E6F3)],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                   ),
@@ -91,18 +96,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                 height: 3,
                 color: Colors.black87,
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  new TextField(
-                    decoration: new InputDecoration(labelText: "Enter your number"),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly
-                    ], // Only numbers can be entered
-                  ),
-                ],
-              )
             ],
           ),
         ),
@@ -148,7 +141,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               Material(
                 child: Column(
                   children: <Widget>[
-                    buildBodyCardTitle(title: "Kontrolovat stav ráno (16:00)"),
+                    buildBodyCardTitle(title: "Kontrolovat stav ráno (7:00)"),
                     ToggleSwitch(
                       minWidth: 90.0,
                       initialLabelIndex: _morning == false ? 0 : 1,
@@ -161,8 +154,11 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                       activeBgColors: [Colors.red, Colors.green],
                       onToggle: (index) {
                         _morning = index == 0 ? false : true;
-                        sendDataToServer();
-                        print('switched to: $index');
+                        if (sendDataToServer() == 200) {
+                          final snackBar =
+                              SnackBar(content: Text('Úspěšně uloženo'));
+                          _scaffoldKey.currentState.showSnackBar(snackBar);
+                        }
                       },
                     ),
                     buildBodyCardTitle(title: "Kontrolovat stav večer (22:00)"),
@@ -178,10 +174,16 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                       activeBgColors: [Colors.red, Colors.green],
                       onToggle: (index) {
                         _evening = index == 0 ? false : true;
-                        sendDataToServer();
-                        print('switched to: $index');
+                        if (sendDataToServer() == 200) {
+                          final snackBar =
+                              SnackBar(content: Text('Úspěšně uloženo'));
+                          _scaffoldKey.currentState.showSnackBar(snackBar);
+                        }
                       },
                     ),
+                    buildBodyCardTitle(title: "Zalévat od vlhkosti"),
+                    buildNumberSelect(),
+                    buildSaveButton(),
                   ],
                 ),
               ),
@@ -189,6 +191,49 @@ class _GeneralSettingsState extends State<GeneralSettings> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget buildSaveButton() {
+    return Builder(
+      builder: (BuildContext context) {
+        return Center(
+          child: FlatButton(
+            padding: const EdgeInsets.only(top: 10, bottom: 10),
+            onPressed: () {
+              if (sendDataToServer() == 200) {
+                Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text('Úspěšně uloženo'),
+                ));
+              }
+            },
+            child: Text(
+              'Uložit',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            color: Colors.blue,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget buildNumberSelect() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        new NumberPicker.integer(
+            initialValue: _currentHumidity,
+            minValue: 0,
+            maxValue: 100,
+            onChanged: (newValue) {
+              setState(() => _currentHumidity = newValue);
+            }),
+      ],
     );
   }
 
@@ -203,7 +248,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
           Text(
             _error,
             style: TextStyle(
-              color: Colors.red,
+              color: Colors.blue,
               fontSize: 30,
               fontWeight: FontWeight.bold,
             ),
@@ -223,7 +268,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
           Text(
             title,
             style: TextStyle(
-              color: Colors.red,
+              color: Colors.blue,
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),

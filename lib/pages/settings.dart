@@ -37,7 +37,7 @@ class SettingsState extends State<Settings> {
                 height: height * .20,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Color(0xFFFF504A), Color(0xFFFFAEAB)],
+                    colors: [Color(0xFF2196F3), Color(0xFFD3E6F3)],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                   ),
@@ -97,7 +97,7 @@ class SettingsState extends State<Settings> {
                     buildItem(
                         link: LevelSettings(),
                         title: "Nastavení priorit",
-                        color: Colors.red),
+                        color: Colors.blue),
                     Divider(
                       height: 3,
                       color: Colors.black87,
@@ -105,7 +105,7 @@ class SettingsState extends State<Settings> {
                     buildItem(
                         link: GeneralSettings(),
                         title: "Nastavení zalévání",
-                        color: Colors.amber),
+                        color: Colors.green),
                   ],
                 ),
               ),
@@ -126,7 +126,7 @@ class SettingsState extends State<Settings> {
           Text(
             title,
             style: TextStyle(
-              color: Colors.red,
+              color: Colors.blue,
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),

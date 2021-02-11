@@ -44,7 +44,7 @@ class _MainState extends State<Main> {
     return Scaffold(
       appBar: AppBar(
         title: Text(ProjectSetup.projectTitle),
-        backgroundColor: Colors.red,
+        backgroundColor: Colors.blue,
       ),
       body: PageView(
         controller: _pageController,
@@ -57,29 +57,29 @@ class _MainState extends State<Main> {
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home,
-                color: _selectedIndex == 0 ? Colors.red : Colors.grey),
+                color: _selectedIndex == 0 ? Colors.blue : Colors.grey),
             title: Text(
               'Domů',
               style: TextStyle(
-                  color: _selectedIndex == 0 ? Colors.red : Colors.grey),
+                  color: _selectedIndex == 0 ? Colors.blue : Colors.grey),
             ),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings,
-                color: _selectedIndex == 1 ? Colors.red : Colors.grey),
+                color: _selectedIndex == 1 ? Colors.blue : Colors.grey),
             title: Text(
               'Nastavení',
               style: TextStyle(
-                  color: _selectedIndex == 1 ? Colors.red : Colors.grey),
+                  color: _selectedIndex == 1 ? Colors.blue : Colors.grey),
             ),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.history,
-                color: _selectedIndex == 2 ? Colors.red : Colors.grey),
+                color: _selectedIndex == 2 ? Colors.blue : Colors.grey),
             title: Text(
               'Historie',
               style: TextStyle(
-                  color: _selectedIndex == 2 ? Colors.red : Colors.grey),
+                  color: _selectedIndex == 2 ? Colors.blue : Colors.grey),
             ),
           ),
         ],

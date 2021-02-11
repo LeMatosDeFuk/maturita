@@ -78,7 +78,7 @@ class _HomeState extends State<Home> {
                 height: height * .20,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Color(0xFFFF504A), Color(0xFFFFAEAB)],
+                    colors: [Color(0xFF2196F3), Color(0xFFD3E6F3)],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                   ),
@@ -237,7 +237,9 @@ class _HomeState extends State<Home> {
                     buildNotificationItem(
                         icon: WeatherIcons.day_sunny,
                         itemTitle: "Intenzita světla",
-                        sensorValue: _photoSensorValue),
+                        sensorValue: _photoSensorValue,
+                        backgroundColor: Color(0xFFFFC800)
+                    ),
                     Divider(
                       height: 3,
                       color: Colors.black87,
@@ -245,7 +247,9 @@ class _HomeState extends State<Home> {
                     buildNotificationItem(
                         icon: WeatherIcons.humidity,
                         itemTitle: "Vlhkost",
-                        sensorValue: _humiditySensorValue),
+                        sensorValue: _humiditySensorValue,
+                        backgroundColor: Colors.blue
+                    ),
                     Divider(
                       height: 3,
                       color: Colors.black87,
@@ -253,7 +257,9 @@ class _HomeState extends State<Home> {
                     buildNotificationItem(
                         icon: WeatherIcons.thermometer,
                         itemTitle: "Teplota",
-                        sensorValue: _temperatureSensorValue),
+                        sensorValue: _temperatureSensorValue,
+                        backgroundColor: Colors.red
+                    ),
                   ],
                 ),
               ),
@@ -274,7 +280,7 @@ class _HomeState extends State<Home> {
           Text(
             title,
             style: TextStyle(
-              color: Colors.red,
+              color: Colors.blue,
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -306,9 +312,9 @@ class _HomeState extends State<Home> {
                   child: LiquidCircularProgressIndicator(
                     value: _waterSensorData / 100,
                     // Defaults to 0.5.
-                    valueColor: AlwaysStoppedAnimation(Colors.red),
+                    valueColor: AlwaysStoppedAnimation(Color(0xFF69B8FF)),
                     backgroundColor: Colors.white,
-                    borderColor: Colors.red,
+                    borderColor: Colors.blue,
                     borderWidth: 4.0,
                     direction: Axis.vertical,
                     center: Text(
@@ -326,7 +332,7 @@ class _HomeState extends State<Home> {
         ));
   }
 
-  Widget buildNotificationItem({icon, String itemTitle, sensorValue}) {
+  Widget buildNotificationItem({icon, String itemTitle, sensorValue, backgroundColor}) {
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 10),
       child: ListTile(
@@ -336,7 +342,7 @@ class _HomeState extends State<Home> {
           width: 60,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Colors.red,
+            color: backgroundColor,
           ),
           child: BoxedIcon(
             icon,
