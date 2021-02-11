@@ -9,7 +9,7 @@
 const char *ssid = "HUB 2.0";  
 const char *password = "hubvplzni";
  
-const char *host = "http://192.168.101.238/laravel/maturita-web/api/get-data";
+const char *host = "http://192.168.101.238/laravel/maturita-web/api/post-data";
 
 const int Dallas = 5;
 const int photoResistor = A0;
