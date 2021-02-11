@@ -22,11 +22,11 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     super.initState();
   }
 
-  String _error;
-
+  int _currentHumidity = 50;
   bool _morning = false;
   bool _evening = false;
-  int _currentHumidity = 50;
+  bool _fetchedData = false;
+  String _error = 'Načítám data';
 
   var response;
 
@@ -36,7 +36,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     }, body: {
       "checkMorning": _morning.toString(),
       "checkEvening": _evening.toString(),
-      "humidity": _currentHumidity
+      "humidity": _currentHumidity.toString()
     }).then((response) {
       print('Response status: ${response.statusCode}');
       print('Response body: ${response.body}');
@@ -55,17 +55,20 @@ class _GeneralSettingsState extends State<GeneralSettings> {
         _morning = jsonResponse['checkMorning'] == 0 ? false : true;
         _evening = jsonResponse['checkEvening'] == 0 ? false : true;
         _currentHumidity = jsonResponse['humidity'];
+        _fetchedData = true;
       });
     } catch (e) {
       print(e);
-      _error = 'Nelze načíst data';
+      setState(() {
+        _error = 'Nelze načíst data';
+      });
     }
   }
 
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    _error = 'Nelze načíst data';
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -90,8 +93,8 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                 ),
               ),
               buildHeaderData(height, width),
-              _error != null
-                  ? buildNotificationPanel(width, height)
+              _fetchedData == true
+                  ? buildBody(width, height)
                   : buildError(width, height),
               Divider(
                 height: 3,
@@ -130,7 +133,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     );
   }
 
-  Widget buildNotificationPanel(double width, double height) {
+  Widget buildBody(double width, double height) {
     return Positioned(
       width: width,
       top: height * 0.20,
@@ -224,6 +227,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 
   Widget buildNumberSelect() {
+    print(_currentHumidity);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[

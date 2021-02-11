@@ -25,21 +25,21 @@ class _HomeState extends State<Home> {
 
   String _welcomeText = "Dobrý den";
 
-  String _photoSensorValue = 'Neaktualizováno';
-  String _temperatureSensorValue = 'Neaktualizováno';
-  String _humiditySensorValue = 'Neaktualizováno';
+  String _photoSensorValue = 'Načítám data';
+  String _temperatureSensorValue = 'Načítám data';
+  String _humiditySensorValue = 'Načítám data';
+  String _waterSensorValue = 'Načítám data';
 
   // Zkusebni data
   double _waterSensorData = 20.0;
-  String _waterSensorValue = '20%';
 
   var response;
   IconData timeIcon = WeatherIcons.day_sunny;
 
   readSensorData() async {
     try {
-      response =
-          await http.get(sensorDataUrl, headers: {"Accept": "application/json"});
+      response = await http
+          .get(sensorDataUrl, headers: {"Accept": "application/json"});
 
       var jsonResponse = json.decode(response.body);
 
@@ -49,6 +49,8 @@ class _HomeState extends State<Home> {
         _photoSensorValue = jsonResponse['lighting'];
         double _photoSensorData = double.parse(jsonResponse['lighting']);
 
+        _waterSensorValue = '20%';
+
         if (_photoSensorData < 300.00) {
           timeIcon = WeatherIcons.night_clear;
           _welcomeText = "Dobrý večer";
@@ -56,9 +58,12 @@ class _HomeState extends State<Home> {
       });
     } catch (e) {
       print(e);
-      _humiditySensorValue = 'Nelze načíst data';
-      _photoSensorValue = 'Nelze načíst data';
-      _temperatureSensorValue = 'Nelze načíst data';
+      setState(() {
+        _humiditySensorValue = 'Nelze načíst data';
+        _photoSensorValue = 'Nelze načíst data';
+        _temperatureSensorValue = 'Nelze načíst data';
+        _waterSensorValue = 'Nelze načíst data';
+      });
     }
   }
 
@@ -87,7 +92,7 @@ class _HomeState extends State<Home> {
               buildHeader(width, height),
               buildHeaderData(height, width),
               buildHeaderInfoCard(height, width),
-              buildNotificationPanel(width, height),
+              buildPanel(width, height),
             ],
           ),
         ),
@@ -209,7 +214,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget buildNotificationPanel(double width, double height) {
+  Widget buildPanel(double width, double height) {
     return Positioned(
       width: width,
       height: height * .70 - 40,
@@ -238,8 +243,7 @@ class _HomeState extends State<Home> {
                         icon: WeatherIcons.day_sunny,
                         itemTitle: "Intenzita světla",
                         sensorValue: _photoSensorValue,
-                        backgroundColor: Color(0xFFFFC800)
-                    ),
+                        backgroundColor: Color(0xFFFFC800)),
                     Divider(
                       height: 3,
                       color: Colors.black87,
@@ -248,8 +252,7 @@ class _HomeState extends State<Home> {
                         icon: WeatherIcons.humidity,
                         itemTitle: "Vlhkost",
                         sensorValue: _humiditySensorValue,
-                        backgroundColor: Colors.blue
-                    ),
+                        backgroundColor: Colors.blue),
                     Divider(
                       height: 3,
                       color: Colors.black87,
@@ -258,8 +261,7 @@ class _HomeState extends State<Home> {
                         icon: WeatherIcons.thermometer,
                         itemTitle: "Teplota",
                         sensorValue: _temperatureSensorValue,
-                        backgroundColor: Colors.red
-                    ),
+                        backgroundColor: Colors.red),
                   ],
                 ),
               ),
@@ -332,7 +334,8 @@ class _HomeState extends State<Home> {
         ));
   }
 
-  Widget buildNotificationItem({icon, String itemTitle, sensorValue, backgroundColor}) {
+  Widget buildNotificationItem(
+      {icon, String itemTitle, sensorValue, backgroundColor}) {
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 10),
       child: ListTile(

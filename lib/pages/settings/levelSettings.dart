@@ -19,7 +19,8 @@ class _LevelSettingsState extends State<LevelSettings> {
     super.initState();
   }
 
-  String _error = null;
+  bool _fetchedData = false;
+  String _error = 'Načítám data';
 
   int _first = 1;
   int _second = 1;
@@ -56,10 +57,13 @@ class _LevelSettingsState extends State<LevelSettings> {
         _second = int.parse(jsonResponse[1]['level']);
         _third = int.parse(jsonResponse[2]['level']);
         _fourth = int.parse(jsonResponse[3]['level']);
+        _fetchedData = true;
       });
     } catch (e) {
       print(e);
-      _error = 'Nelze načíst data';
+      setState(() {
+        _error = 'Nelze načíst data';
+      });
     }
   }
 
@@ -121,7 +125,9 @@ class _LevelSettingsState extends State<LevelSettings> {
                 ),
               ),
               buildHeaderData(height, width),
-              buildNotificationPanel(width, height),
+              _fetchedData == true
+                  ? buildBody(width, height)
+                  : buildError(width, height),
             ],
           ),
         ),
@@ -155,7 +161,7 @@ class _LevelSettingsState extends State<LevelSettings> {
     );
   }
 
-  Widget buildNotificationPanel(double width, double height) {
+  Widget buildBody(double width, double height) {
     return Positioned(
       width: width,
       height: height * .70 - 40,
@@ -293,46 +299,51 @@ class _LevelSettingsState extends State<LevelSettings> {
   }
 
   Widget buildNumberInput(number, variable) {
-    if (_error == null) {
-      return Container(
-        height: 50,
-        width: 150,
-        padding: const EdgeInsets.only(top: 10, bottom: 10),
-        child: new Center(
-          child: new Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              new FloatingActionButton(
-                heroTag: "buttonMinus" + number,
-                onPressed: () => minus(variable, number),
-                child: new Icon(Icons.remove, color: Colors.black),
-                backgroundColor: Colors.white,
-              ),
-              new Text('$variable', style: new TextStyle(fontSize: 20.0)),
-              new FloatingActionButton(
-                heroTag: "buttonPlus" + number,
-                onPressed: () => add(variable, number),
-                child: new Icon(Icons.add, color: Colors.black),
-                backgroundColor: Colors.white,
-              ),
-            ],
-          ),
+    return Container(
+      height: 50,
+      width: 150,
+      padding: const EdgeInsets.only(top: 10, bottom: 10),
+      child: new Center(
+        child: new Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            new FloatingActionButton(
+              heroTag: "buttonMinus" + number,
+              onPressed: () => minus(variable, number),
+              child: new Icon(Icons.remove, color: Colors.black),
+              backgroundColor: Colors.white,
+            ),
+            new Text('$variable', style: new TextStyle(fontSize: 20.0)),
+            new FloatingActionButton(
+              heroTag: "buttonPlus" + number,
+              onPressed: () => add(variable, number),
+              child: new Icon(Icons.add, color: Colors.black),
+              backgroundColor: Colors.white,
+            ),
+          ],
         ),
-      );
-    } else {
-      return Container(
-        height: 50,
-        width: 150,
-        padding: const EdgeInsets.only(top: 10, bottom: 10),
-        child: Center(
-            child: Text(
-          _error,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Colors.grey,
+      ),
+    );
+  }
+
+  Widget buildError(double width, double height) {
+    return Positioned(
+      width: width,
+      top: height * 0.4,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            _error,
+            style: TextStyle(
+              color: Colors.blue,
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        )),
-      );
-    }
+        ],
+      ),
+    );
   }
 }
