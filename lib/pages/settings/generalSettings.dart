@@ -54,6 +54,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       setState(() {
         _morning = jsonResponse['checkMorning'] == 0 ? false : true;
         _evening = jsonResponse['checkEvening'] == 0 ? false : true;
+        _currentHumidity = jsonResponse['humidity'];
       });
     } catch (e) {
       print(e);
