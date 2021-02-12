@@ -47,9 +47,9 @@ class _HomeState extends State<Home> {
         _humiditySensorValue = jsonResponse['humidity'] + "%";
         _temperatureSensorValue = jsonResponse['temperature'] + "\u2103";
         _photoSensorValue = jsonResponse['lighting'];
+        _waterSensorValue = jsonResponse['waterLevel'] + "%";
+        _waterSensorData = double.parse(jsonResponse['waterLevel']);
         double _photoSensorData = double.parse(jsonResponse['lighting']);
-
-        _waterSensorValue = '20%';
 
         if (_photoSensorData < 300.00) {
           timeIcon = WeatherIcons.night_clear;

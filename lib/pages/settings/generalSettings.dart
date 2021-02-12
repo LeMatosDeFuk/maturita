@@ -185,7 +185,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                         }
                       },
                     ),
-                    buildBodyCardTitle(title: "Zalévat od vlhkosti"),
+                    buildBodyCardTitle(title: "Zalévat od vlhkosti (%)"),
                     buildNumberSelect(),
                     buildSaveButton(),
                   ],
