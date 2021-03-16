@@ -6,14 +6,14 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
  
-const char *ssid = "HUB 2.0";  
-const char *password = "hubvplzni";
+const char *ssid = "MI9";  
+const char *password = "huhuhuhu";
  
-const char *host = "http://192.168.101.238/laravel/maturita-web/api/get-data";
+const char *host = "http://maturita-web.cernymatej.cz/api/sensor-data";
 
 const int Dallas = 5;
 const int photoResistor = A0;
-const int waterSensor = 3;
+const int humiditySensor = 3;
 int sensorValue;          // Proměnná pro uložení hodnoty z fotorezistoru (0-1023)
 
 OneWire oneWireDS(Dallas);
@@ -63,23 +63,23 @@ String getTemperatureValues() {
   return String(sensorDallas.getTempCByIndex(0));
 }
 
-String getWaterSensorValues() {
-  float waterSensorValue = digitalRead(waterSensor);
-  Serial.print("Hladina vody: ");
-  Serial.println(waterSensorValue);
+String getHumidityValues() {
+  float humidityValue = digitalRead(humiditySensor);
+  Serial.print("Vlhkost: ");
+  Serial.println(humidityValue);
 
-  return String(waterSensorValue);
+  return String(humidityValue);
 }
  
 void loop() {
   HTTPClient http;
 
-  String temperature, humidity, postData;
-  temperature = getDallasSensorValues();
-  water = getWaterSensorValues();
-  lighting = getPhotoSensorValues();
+  String temperature, humidity, lighting, postData;
+  temperature = getTemperatureValues();
+  humidity = getHumidityValues();
+  lighting = getLightingValues();
  
-  postData = "temperature=" + temperature + "&waterLevel=" + waterLevel + "&lighting=" + lighting;
+  postData = "temperature=" + temperature + "&humidity=" + humidity + "&lighting=" + lighting + "&waterLevel=" + "20";
   http.begin(host);
   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
   int httpCode = http.POST(postData);

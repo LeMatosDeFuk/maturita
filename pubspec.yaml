@@ -14,6 +14,7 @@ environment:
 
 dependencies:
   liquid_progress_indicator: ^0.3.2
+  cupertino_icons: ^1.0.0
   weather_icons: 2.0.2
   intl: ^0.16.1
   toggle_switch: "^0.1.8"
@@ -21,9 +22,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^0.1.2
   http:
 
 dev_dependencies:

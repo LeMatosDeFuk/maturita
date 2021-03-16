@@ -12,7 +12,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final String sensorDataUrl = ProjectSetup.url + "sensor-data";
+  final String sensorDataUrl = ProjectSetup.url + "sensor-data-latest";
 
   @override
   void initState() {
@@ -21,7 +21,7 @@ class _HomeState extends State<Home> {
   }
 
   String _formattedDate =
-      DateFormat('dd.MM.yyyy kk:mm').format(DateTime.now().toUtc());
+      DateFormat('dd.MM.yyyy kk:mm').format(DateTime.now().toLocal());
 
   String _welcomeText = "Dobrý den";
 
@@ -29,9 +29,7 @@ class _HomeState extends State<Home> {
   String _temperatureSensorValue = 'Načítám data';
   String _humiditySensorValue = 'Načítám data';
   String _waterSensorValue = 'Načítám data';
-
-  // Zkusebni data
-  double _waterSensorData = 20.0;
+  int _waterSensorData = 20;
 
   var response;
   IconData timeIcon = WeatherIcons.day_sunny;
@@ -44,14 +42,15 @@ class _HomeState extends State<Home> {
       var jsonResponse = json.decode(response.body);
 
       setState(() {
-        _humiditySensorValue = jsonResponse['humidity'] + "%";
-        _temperatureSensorValue = jsonResponse['temperature'] + "\u2103";
-        _photoSensorValue = jsonResponse['lighting'];
-        _waterSensorValue = jsonResponse['waterLevel'] + "%";
-        _waterSensorData = double.parse(jsonResponse['waterLevel']);
-        double _photoSensorData = double.parse(jsonResponse['lighting']);
+        // print(jsonResponse);
+        _humiditySensorValue = jsonResponse['humidity'].toString() + '%';
+        _temperatureSensorValue = jsonResponse['temperature'].toString() + "\u2103";
+        _photoSensorValue = jsonResponse['lighting'].toString();
+        _waterSensorValue = jsonResponse['waterLevel'].toString() + "%";
+        _waterSensorData = jsonResponse['waterLevel'];
+        int _photoSensorData = jsonResponse['lighting'];
 
-        if (_photoSensorData < 300.00) {
+        if (_photoSensorData < 300) {
           timeIcon = WeatherIcons.night_clear;
           _welcomeText = "Dobrý večer";
         }
@@ -350,7 +349,7 @@ class _HomeState extends State<Home> {
           child: BoxedIcon(
             icon,
             size: 20,
-            color: Colors.white70,
+            color: Colors.white,
           ),
         ),
         title: Text(

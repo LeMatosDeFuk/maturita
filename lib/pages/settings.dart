@@ -1,5 +1,6 @@
 import 'file:///C:/Users/matce/AndroidStudioProjects/maturita/lib/pages/settings/levelSettings.dart';
 import 'package:M_M_Smart_Home/pages/settings/generalSettings.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:M_M_Smart_Home/main.dart';
 import 'package:weather_icons/weather_icons.dart';
@@ -95,6 +96,11 @@ class SettingsState extends State<Settings> {
                 child: Column(
                   children: <Widget>[
                     buildItem(
+                        icon: Icon(
+                          Icons.add_circle_outline_outlined,
+                          size: 20,
+                          color: Colors.white,
+                        ),
                         link: LevelSettings(),
                         title: "Nastavení priorit",
                         color: Colors.blue),
@@ -103,6 +109,11 @@ class SettingsState extends State<Settings> {
                       color: Colors.black87,
                     ),
                     buildItem(
+                        icon: BoxedIcon(
+                          WeatherIcons.rain,
+                          size: 20,
+                          color: Colors.white,
+                        ),
                         link: GeneralSettings(),
                         title: "Nastavení zalévání",
                         color: Colors.green),
@@ -148,6 +159,7 @@ class SettingsState extends State<Settings> {
             shape: BoxShape.circle,
             color: color,
           ),
+          child: icon,
         ),
         title: Text(
           title,

@@ -172,37 +172,23 @@ class _LevelSettingsState extends State<LevelSettings> {
           child: Column(
             children: <Widget>[
               Material(
-                elevation: 1,
-                color: Colors.white,
                 child: Column(
                   children: <Widget>[
                     buildBodyCardTitle(title: "Sektor 1"),
                     buildNumberInput("1", _first),
-                    Divider(
-                      height: 3,
-                      color: Colors.black87,
-                    ),
                     buildBodyCardTitle(title: "Sektor 2"),
                     buildNumberInput("2", _second),
-                    Divider(
-                      height: 3,
-                      color: Colors.black87,
-                    ),
                     buildBodyCardTitle(title: "Sektor 3"),
                     buildNumberInput("3", _third),
-                    Divider(
-                      height: 3,
-                      color: Colors.black87,
-                    ),
                     buildBodyCardTitle(title: "Sektor 4"),
                     buildNumberInput("4", _fourth),
                   ],
                 ),
               ),
-              Divider(height: 20, color: Colors.transparent),
               Builder(
                 builder: (BuildContext context) {
-                  return Center(
+                  return Padding(
+                    padding: const EdgeInsets.all(20),
                     child: FlatButton(
                       padding: const EdgeInsets.only(top: 10, bottom: 10),
                       onPressed: () {
