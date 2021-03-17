@@ -1,5 +1,6 @@
 import 'file:///C:/Users/matce/AndroidStudioProjects/maturita/lib/pages/settings/levelSettings.dart';
 import 'package:M_M_Smart_Home/pages/settings/generalSettings.dart';
+import 'package:M_M_Smart_Home/pages/settings/humiditySettings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:M_M_Smart_Home/main.dart';
@@ -103,7 +104,7 @@ class SettingsState extends State<Settings> {
                         ),
                         link: LevelSettings(),
                         title: "Nastavení priorit",
-                        color: Colors.blue),
+                        color: Colors.red),
                     Divider(
                       height: 3,
                       color: Colors.black87,
@@ -117,6 +118,19 @@ class SettingsState extends State<Settings> {
                         link: GeneralSettings(),
                         title: "Nastavení zalévání",
                         color: Colors.green),
+                    Divider(
+                      height: 3,
+                      color: Colors.black87,
+                    ),
+                    buildItem(
+                        icon: BoxedIcon(
+                          WeatherIcons.humidity,
+                          size: 20,
+                          color: Colors.white,
+                        ),
+                        link: HumiditySettings(),
+                        title: "Nastavení vlhkosti",
+                        color: Colors.blue),
                   ],
                 ),
               ),

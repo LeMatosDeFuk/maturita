@@ -3,17 +3,15 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:M_M_Smart_Home/main.dart';
 import 'package:http/http.dart' as http;
-import 'package:toggle_switch/toggle_switch.dart';
 import 'package:numberpicker/numberpicker.dart';
 
-class GeneralSettings extends StatefulWidget {
+class HumiditySettings extends StatefulWidget {
   @override
-  _GeneralSettingsState createState() => _GeneralSettingsState();
+  _HumiditySettingsState createState() => _HumiditySettingsState();
 }
 
-class _GeneralSettingsState extends State<GeneralSettings> {
+class _HumiditySettingsState extends State<HumiditySettings> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  static const IconData check = IconData(0xe64c, fontFamily: 'MaterialIcons');
   final String apiUrl = ProjectSetup.url + "general-settings";
 
   @override
@@ -22,12 +20,10 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     super.initState();
   }
 
-  int _currentWaterLevel1 = 50;
-  int _currentWaterLevel2 = 50;
-  int _currentWaterLevel3 = 50;
-  int _currentWaterLevel4 = 50;
-  bool _morning = false;
-  bool _evening = false;
+  int _currentHumidity1 = 50;
+  int _currentHumidity2 = 50;
+  int _currentHumidity3 = 50;
+  int _currentHumidity4 = 50;
   bool _fetchedData = false;
   String _error = 'Načítám data';
 
@@ -37,12 +33,10 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     http.post(apiUrl, headers: {
       'Accept': 'application/json; charset=UTF-8',
     }, body: {
-      "checkMorning": _morning.toString(),
-      "checkEvening": _evening.toString(),
-      "waterLevel1": _currentWaterLevel1.toString(),
-      "waterLevel2": _currentWaterLevel2.toString(),
-      "waterLevel3": _currentWaterLevel3.toString(),
-      "waterLevel4": _currentWaterLevel4.toString()
+      "humidity1": _currentHumidity1.toString(),
+      "humidity2": _currentHumidity2.toString(),
+      "humidity3": _currentHumidity3.toString(),
+      "humidity4": _currentHumidity4.toString()
     }).then((response) {
       print('Response status: ${response.statusCode}');
       print('Response body: ${response.body}');
@@ -58,12 +52,10 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
       var jsonResponse = json.decode(response.body);
       setState(() {
-        _morning = jsonResponse['checkMorning'] == 0 ? false : true;
-        _evening = jsonResponse['checkEvening'] == 0 ? false : true;
-        _currentWaterLevel1 = jsonResponse['waterLevel1'];
-        _currentWaterLevel2 = jsonResponse['waterLevel2'];
-        _currentWaterLevel3 = jsonResponse['waterLevel3'];
-        _currentWaterLevel4 = jsonResponse['waterLevel4'];
+        _currentHumidity1 = jsonResponse['humidity1'];
+        _currentHumidity2 = jsonResponse['humidity2'];
+        _currentHumidity3 = jsonResponse['humidity3'];
+        _currentHumidity4 = jsonResponse['humidity4'];
         _fetchedData = true;
       });
     } catch (e) {
@@ -87,7 +79,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       body: SingleChildScrollView(
         child: Container(
           width: width,
-          height: height + 600,
+          height: height + 300,
           child: Stack(
             children: <Widget>[
               Container(
@@ -129,7 +121,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                "Nastavení zalévání",
+                "Nastavení vlhkosti pro sektory",
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -154,99 +146,59 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               Material(
                 child: Column(
                   children: <Widget>[
-                    buildBodyCardTitle(title: "Kontrolovat stav ráno (7:00)"),
-                    ToggleSwitch(
-                      minWidth: 90.0,
-                      initialLabelIndex: _morning == false ? 0 : 1,
-                      cornerRadius: 20.0,
-                      activeFgColor: Colors.white,
-                      inactiveBgColor: Colors.grey,
-                      inactiveFgColor: Colors.white,
-                      labels: ['Ne', 'Ano'],
-                      icons: [check, Icons.close],
-                      activeBgColors: [Colors.red, Colors.green],
-                      onToggle: (index) {
-                        _morning = index == 0 ? false : true;
-                        if (sendDataToServer() == 200) {
-                          final snackBar =
-                              SnackBar(content: Text('Úspěšně uloženo'));
-                          _scaffoldKey.currentState.showSnackBar(snackBar);
-                        }
-                      },
-                    ),
-                    buildBodyCardTitle(title: "Kontrolovat stav večer (22:00)"),
-                    ToggleSwitch(
-                      minWidth: 90.0,
-                      initialLabelIndex: _evening == false ? 0 : 1,
-                      cornerRadius: 20.0,
-                      activeFgColor: Colors.white,
-                      inactiveBgColor: Colors.grey,
-                      inactiveFgColor: Colors.white,
-                      labels: ['Ne', 'Ano'],
-                      icons: [check, Icons.close],
-                      activeBgColors: [Colors.red, Colors.green],
-                      onToggle: (index) {
-                        _evening = index == 0 ? false : true;
-                        if (sendDataToServer() == 200) {
-                          final snackBar =
-                              SnackBar(content: Text('Úspěšně uloženo'));
-                          _scaffoldKey.currentState.showSnackBar(snackBar);
-                        }
-                      },
-                    ),
                     buildBodyCardTitle(
-                        title: "Zalévat sektor 1 od hladiny vody (%)"),
+                        title: "Zalévat sektor 1 od vlhkosti (%)"),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         new NumberPicker.integer(
-                            initialValue: _currentWaterLevel1,
+                            initialValue: _currentHumidity1,
                             minValue: 0,
                             maxValue: 100,
                             onChanged: (newValue1) {
-                              setState(() =>  _currentWaterLevel1 = newValue1);
+                              setState(() =>  _currentHumidity1 = newValue1);
                             }),
                       ],
                     ),
                     buildBodyCardTitle(
-                        title: "Zalévat sektor 2 od hladiny vody (%)"),
+                        title: "Zalévat sektor 2 od vlhkosti (%)"),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         new NumberPicker.integer(
-                            initialValue: _currentWaterLevel2,
+                            initialValue: _currentHumidity2,
                             minValue: 0,
                             maxValue: 100,
                             onChanged: (newValue2) {
-                              setState(() =>  _currentWaterLevel2 = newValue2);
+                              setState(() =>  _currentHumidity2 = newValue2);
                             }),
                       ],
                     ),
                     buildBodyCardTitle(
-                        title: "Zalévat sektor 3 od hladiny vody (%)"),
+                        title: "Zalévat sektor 3 od vlhkosti (%)"),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         new NumberPicker.integer(
-                            initialValue: _currentWaterLevel3,
+                            initialValue: _currentHumidity3,
                             minValue: 0,
                             maxValue: 100,
                             onChanged: (newValue3) {
-                              setState(() =>  _currentWaterLevel3 = newValue3);
+                              setState(() =>  _currentHumidity3 = newValue3);
                             }),
                       ],
                     ),
                     buildBodyCardTitle(
-                        title: "Zalévat sektor 4 od hladiny vody (%)"),
+                        title: "Zalévat sektor 4 od vlhkosti (%)"),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         new NumberPicker.integer(
-                            initialValue: _currentWaterLevel4,
+                            initialValue: _currentHumidity4,
                             minValue: 0,
                             maxValue: 100,
                             onChanged: (newValue4) {
-                              setState(() =>  _currentWaterLevel4 = newValue4);
+                              setState(() =>  _currentHumidity4 = newValue4);
                             }),
                       ],
                     ),
