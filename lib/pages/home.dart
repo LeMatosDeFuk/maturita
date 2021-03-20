@@ -44,7 +44,8 @@ class _HomeState extends State<Home> {
       setState(() {
         // print(jsonResponse);
         _humiditySensorValue = jsonResponse['humidity'].toString() + '%';
-        _temperatureSensorValue = jsonResponse['temperature'].toString() + "\u2103";
+        _temperatureSensorValue =
+            jsonResponse['temperature'].toString() + "\u2103";
         _photoSensorValue = jsonResponse['lighting'].toString();
         _waterSensorValue = jsonResponse['waterLevel'].toString() + "%";
         _waterSensorData = jsonResponse['waterLevel'];
