@@ -1,4 +1,4 @@
-const int photoResistor = A0;
+const int photoResistor = A5;
 int sensorValue;
 
 void setup(){

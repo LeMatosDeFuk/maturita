@@ -22,7 +22,9 @@ class HistoryState extends State<History> {
   var response;
   bool _fetchedData = false;
   String _error = 'Načítám data';
-  List<String> entries;
+  List<int> entries = <int>[
+    123,1234,12345
+  ];
   List<int> colorCodes = <int>[
     1000,
     900,
@@ -47,7 +49,8 @@ class HistoryState extends State<History> {
         _fetchedData = true;
 
         var waterLevels = jsonResponse['waterLevel'];
-        List<String> entries =
+        print(waterLevels);
+        List<int> entries =
             waterLevels != null ? List.from(waterLevels) : null;
       });
     } catch (e) {
@@ -141,33 +144,6 @@ class HistoryState extends State<History> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget buildItem({icon, link, String title, color}) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10, bottom: 10),
-      child: ListTile(
-        contentPadding: const EdgeInsets.only(left: 10),
-        leading: Container(
-          height: 40,
-          width: 60,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: color,
-          ),
-          child: icon,
-        ),
-        title: Text(
-          title,
-        ),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => link),
-          );
-        },
       ),
     );
   }
