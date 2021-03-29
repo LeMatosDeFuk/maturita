@@ -27,7 +27,10 @@ class _HomeState extends State<Home> {
 
   String _photoSensorValue = 'Načítám data';
   String _temperatureSensorValue = 'Načítám data';
-  String _humiditySensorValue = 'Načítám data';
+  String _humidity1SensorValue = 'Načítám data';
+  String _humidity2SensorValue = 'Načítám data';
+  String _humidity3SensorValue = 'Načítám data';
+  String _humidity4SensorValue = 'Načítám data';
   String _waterSensorValue = 'Načítám data';
   int _waterSensorData = 20;
 
@@ -43,7 +46,11 @@ class _HomeState extends State<Home> {
 
       setState(() {
         // print(jsonResponse);
-        _humiditySensorValue = jsonResponse['humidity'].toString() + '%';
+        _humidity1SensorValue = jsonResponse['humidity1'].toString() + '%';
+        _humidity2SensorValue = jsonResponse['humidity2'].toString() + '%';
+        _humidity3SensorValue = jsonResponse['humidity3'].toString() + '%';
+        _humidity4SensorValue = jsonResponse['humidity4'].toString() + '%';
+
         _temperatureSensorValue =
             jsonResponse['temperature'].toString() + "\u2103";
         _photoSensorValue = jsonResponse['lighting'].toString();
@@ -59,7 +66,11 @@ class _HomeState extends State<Home> {
     } catch (e) {
       print(e);
       setState(() {
-        _humiditySensorValue = 'Nelze načíst data';
+        _humidity1SensorValue = 'Nelze načíst data';
+        _humidity2SensorValue = 'Nelze načíst data';
+        _humidity3SensorValue = 'Nelze načíst data';
+        _humidity4SensorValue = 'Nelze načíst data';
+
         _photoSensorValue = 'Nelze načíst data';
         _temperatureSensorValue = 'Nelze načíst data';
         _waterSensorValue = 'Nelze načíst data';
@@ -75,7 +86,7 @@ class _HomeState extends State<Home> {
       body: SingleChildScrollView(
         child: Container(
           width: width,
-          height: height,
+          height: height + 100,
           child: Stack(
             children: <Widget>[
               Container(
@@ -217,7 +228,7 @@ class _HomeState extends State<Home> {
   Widget buildPanel(double width, double height) {
     return Positioned(
       width: width,
-      height: height * .70 - 40,
+      height: height,
       top: height * 0.20 + 34,
       child: Padding(
         padding: const EdgeInsets.only(right: 16, left: 16, top: 10),
@@ -249,19 +260,46 @@ class _HomeState extends State<Home> {
                       color: Colors.black87,
                     ),
                     buildNotificationItem(
+                        icon: WeatherIcons.thermometer,
+                        itemTitle: "Teplota",
+                        sensorValue: _temperatureSensorValue,
+                        backgroundColor: Colors.red),
+                    Divider(
+                      height: 3,
+                      color: Colors.black87,
+                    ),
+                    buildNotificationItem(
                         icon: WeatherIcons.humidity,
-                        itemTitle: "Vlhkost",
-                        sensorValue: _humiditySensorValue,
+                        itemTitle: "Vlhkost 1",
+                        sensorValue: _humidity1SensorValue,
                         backgroundColor: Colors.blue),
                     Divider(
                       height: 3,
                       color: Colors.black87,
                     ),
                     buildNotificationItem(
-                        icon: WeatherIcons.thermometer,
-                        itemTitle: "Teplota",
-                        sensorValue: _temperatureSensorValue,
-                        backgroundColor: Colors.red),
+                        icon: WeatherIcons.humidity,
+                        itemTitle: "Vlhkost 2",
+                        sensorValue: _humidity2SensorValue,
+                        backgroundColor: Colors.blue),
+                    Divider(
+                      height: 3,
+                      color: Colors.black87,
+                    ),
+                    buildNotificationItem(
+                        icon: WeatherIcons.humidity,
+                        itemTitle: "Vlhkost 3",
+                        sensorValue: _humidity3SensorValue,
+                        backgroundColor: Colors.blue),
+                    Divider(
+                      height: 3,
+                      color: Colors.black87,
+                    ),
+                    buildNotificationItem(
+                        icon: WeatherIcons.humidity,
+                        itemTitle: "Vlhkost 4",
+                        sensorValue: _humidity4SensorValue,
+                        backgroundColor: Colors.blue),
                   ],
                 ),
               ),
