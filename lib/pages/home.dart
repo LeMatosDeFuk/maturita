@@ -46,10 +46,14 @@ class _HomeState extends State<Home> {
 
       setState(() {
         // print(jsonResponse);
-        _humidity1SensorValue = jsonResponse['humidity1'].toString() + '%';
-        _humidity2SensorValue = jsonResponse['humidity2'].toString() + '%';
-        _humidity3SensorValue = jsonResponse['humidity3'].toString() + '%';
-        _humidity4SensorValue = jsonResponse['humidity4'].toString() + '%';
+        _humidity1SensorValue = jsonResponse['humidity1'].toString();
+        _humidity1SensorValue = jsonResponse['humidity1'].toString();
+        _humidity2SensorValue = jsonResponse['humidity2'].toString();
+        _humidity2SensorValue = jsonResponse['humidity2'].toString();
+        _humidity3SensorValue = jsonResponse['humidity3'].toString();
+        _humidity3SensorValue = jsonResponse['humidity3'].toString();
+        _humidity4SensorValue = jsonResponse['humidity4'].toString();
+        _humidity4SensorValue = jsonResponse['humidity4'].toString();
 
         _temperatureSensorValue =
             jsonResponse['temperature'].toString() + "\u2103";
