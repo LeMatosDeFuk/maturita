@@ -15,37 +15,31 @@ const int waterPump4 = 8; // right top
 
 const int photoResistor = A0;
 const int waterSensor = A3;
-
-// temperature
 const int temperatureSensor = A1;
-int Vo;
-float R1 = 100000;
-float logR2, R2, T, temperature;
-float c1 = 1.009249522e-03, c2 = 2.378405444e-04, c3 = 2.019202697e-07;
 
 void setup() {
   Serial.begin(9600);
   NodeMCU.begin(9600);
 
-//  pinMode(waterPump1, OUTPUT);
-//  digitalWrite(waterPump1, LOW);
-//  delay(2000);
-//  digitalWrite(waterPump1, HIGH);
-
-//    pinMode(waterPump2, OUTPUT);
-//    digitalWrite(waterPump2, LOW);
-//    delay(2000);
-//    digitalWrite(waterPump2, HIGH);
-
-//    pinMode(waterPump3, OUTPUT);
-//    digitalWrite(waterPump3, LOW);
-//    delay(2000);
-//    digitalWrite(waterPump3, HIGH);
-
-//    pinMode(waterPump4, OUTPUT);
-//    digitalWrite(waterPump4, LOW);
-//    delay(2000);
-//    digitalWrite(waterPump4, HIGH);
+  //  pinMode(waterPump1, OUTPUT);
+  //  digitalWrite(waterPump1, LOW);
+  //  delay(2000);
+  //  digitalWrite(waterPump1, HIGH);
+  //
+  //  pinMode(waterPump2, OUTPUT);
+  //  digitalWrite(waterPump2, LOW);
+  //  delay(2000);
+  //  digitalWrite(waterPump2, HIGH);
+  //
+  //  pinMode(waterPump3, OUTPUT);
+  //  digitalWrite(waterPump3, LOW);
+  //  delay(2000);
+  //  digitalWrite(waterPump3, HIGH);
+  //
+  //  pinMode(waterPump4, OUTPUT);
+  //  digitalWrite(waterPump4, LOW);
+  //  delay(2000);
+  //  digitalWrite(waterPump4, HIGH);
 
   pinMode(humiditySensor1, INPUT);
   pinMode(humiditySensor2, INPUT);
@@ -93,6 +87,11 @@ String getLightingValues() {
 }
 
 String getTemperatureValues() {
+  int Vo;
+  float R1 = 100000;
+  float logR2, R2, T, temperature;
+  float c1 = 1.009249522e-03, c2 = 2.378405444e-04, c3 = 2.019202697e-07;
+
   Vo = analogRead(temperatureSensor);
   R2 = R1 * (1023.0 / (float)Vo - 1.0);
   logR2 = log(R2);
