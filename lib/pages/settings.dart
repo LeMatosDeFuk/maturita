@@ -118,19 +118,6 @@ class SettingsState extends State<Settings> {
                         link: GeneralSettings(),
                         title: "Nastavení zalévání",
                         color: Colors.green),
-                    Divider(
-                      height: 3,
-                      color: Colors.black87,
-                    ),
-                    buildItem(
-                        icon: BoxedIcon(
-                          WeatherIcons.humidity,
-                          size: 20,
-                          color: Colors.white,
-                        ),
-                        link: HumiditySettings(),
-                        title: "Nastavení vlhkosti",
-                        color: Colors.blue),
                   ],
                 ),
               ),
