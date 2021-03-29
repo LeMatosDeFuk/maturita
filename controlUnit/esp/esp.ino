@@ -4,7 +4,7 @@
 #include <ESP8266HTTPClient.h>
 #include <SoftwareSerial.h>
 
-SoftwareSerial Arduino(D6, D5);
+SoftwareSerial Arduino(D7, D8);
 
 const char *ssid = "MI9";
 const char *password = "huhuhuhu";

@@ -1,5 +1,5 @@
 #include <SoftwareSerial.h>
-SoftwareSerial NodeMCU(3, 4);
+SoftwareSerial NodeMCU(12, 11);
 
 const int humiditySensor1 = 19; // left top
 const int waterPump1 = 5; // right bottom
@@ -31,13 +31,13 @@ void setup() {
   //  delay(2000);
   //  digitalWrite(waterPump2, HIGH);
   //
-  //  pinMode(waterPump3, OUTPUT);
-  //  digitalWrite(waterPump3, LOW);
+  //    pinMode(waterPump3, OUTPUT);
+  //    digitalWrite(waterPump3, LOW);
   //  delay(2000);
   //  digitalWrite(waterPump3, HIGH);
-  //
-  //  pinMode(waterPump4, OUTPUT);
-  //  digitalWrite(waterPump4, LOW);
+
+  //    pinMode(waterPump4, OUTPUT);
+  //    digitalWrite(waterPump4, LOW);
   //  delay(2000);
   //  digitalWrite(waterPump4, HIGH);
 
