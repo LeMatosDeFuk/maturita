@@ -4,14 +4,15 @@
 #include <ESP8266HTTPClient.h>
 #include <SoftwareSerial.h>
 
-SoftwareSerial Arduino(D7, D8);
+SoftwareSerial Arduino(D6, D7);
 
 const char *ssid = "MI9";
 const char *password = "huhuhuhu";
 
-const char *host = "http://maturita-web.cernymatej.cz/api/sensor-data";
+const char *updateData = "http://maturita-web.cernymatej.cz/api/sensor-data";
+const char *actions = "http://maturita-web.cernymatej.cz/api/actions";
 
-String postData;
+int httpCode;
 
 void setup() {
   Serial.begin(9600);
@@ -40,18 +41,30 @@ void setup() {
 
 void loop() {
   HTTPClient http;
-  http.begin(host);
+  http.begin(updateData);
   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
   if (Arduino.available() > 0) {
-    postData = Arduino.readString();
+    String postData = Arduino.readString();
     Serial.println(postData);
+
+    // send data
+    httpCode = http.POST(postData);
+    Serial.println(httpCode);
   }
 
-  int httpCode = http.POST(postData);
+  http.end();
+  delay(5000);
+
+  // get actions
+  http.begin(actions);
+  httpCode = http.GET();
   String payload = http.getString();
   Serial.println(httpCode);
   Serial.println(payload);
+
+  Arduino.write(payload.c_str());
+
   http.end();
   delay(5000);
 }

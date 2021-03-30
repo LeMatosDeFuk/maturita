@@ -1,6 +1,6 @@
 #include <SoftwareSerial.h>
 
-SoftwareSerial NodeMCU(5, 6);
+SoftwareSerial NodeMCU(7, 6);
 int temp, humi;
 String str;
 void setup() {

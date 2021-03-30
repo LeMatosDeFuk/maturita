@@ -1,6 +1,7 @@
 #include <SoftwareSerial.h>
 
-SoftwareSerial Arduino(D6, D5);
+SoftwareSerial Arduino(D6, D7);
+
 int temp, humi;
 String str;
 void setup() {

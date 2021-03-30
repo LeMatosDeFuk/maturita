@@ -1,11 +1,8 @@
-import 'file:///C:/Users/matce/AndroidStudioProjects/maturita/lib/pages/settings/levelSettings.dart';
 import 'package:M_M_Smart_Home/pages/settings/generalSettings.dart';
-import 'package:M_M_Smart_Home/pages/settings/humiditySettings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:M_M_Smart_Home/main.dart';
 import 'package:weather_icons/weather_icons.dart';
-import 'package:http/http.dart' as http;
 
 class Settings extends StatefulWidget {
   @override
@@ -17,9 +14,6 @@ class SettingsState extends State<Settings> {
   void initState() {
     super.initState();
   }
-
-  String _url = ProjectSetup.url;
-  String _projectTitle = ProjectSetup.projectTitle;
 
   var response;
 
@@ -96,19 +90,6 @@ class SettingsState extends State<Settings> {
                 color: Colors.white,
                 child: Column(
                   children: <Widget>[
-                    buildItem(
-                        icon: Icon(
-                          Icons.add_circle_outline_outlined,
-                          size: 20,
-                          color: Colors.white,
-                        ),
-                        link: LevelSettings(),
-                        title: "Nastavení priorit",
-                        color: Colors.red),
-                    Divider(
-                      height: 3,
-                      color: Colors.black87,
-                    ),
                     buildItem(
                         icon: BoxedIcon(
                           WeatherIcons.rain,

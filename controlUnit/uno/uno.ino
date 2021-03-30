@@ -1,5 +1,7 @@
 #include <SoftwareSerial.h>
-SoftwareSerial NodeMCU(12, 11);
+#include <ArduinoJson.h>
+
+SoftwareSerial NodeMCU(7, 6);
 
 const int humiditySensor1 = 19; // left top
 const int waterPump1 = 5; // right bottom
@@ -21,25 +23,10 @@ void setup() {
   Serial.begin(9600);
   NodeMCU.begin(9600);
 
-  //  pinMode(waterPump1, OUTPUT);
-  //  digitalWrite(waterPump1, LOW);
-  //  delay(2000);
-  //  digitalWrite(waterPump1, HIGH);
-  //
-  //  pinMode(waterPump2, OUTPUT);
-  //  digitalWrite(waterPump2, LOW);
-  //  delay(2000);
-  //  digitalWrite(waterPump2, HIGH);
-  //
-  //    pinMode(waterPump3, OUTPUT);
-  //    digitalWrite(waterPump3, LOW);
-  //  delay(2000);
-  //  digitalWrite(waterPump3, HIGH);
-
-  //    pinMode(waterPump4, OUTPUT);
-  //    digitalWrite(waterPump4, LOW);
-  //  delay(2000);
-  //  digitalWrite(waterPump4, HIGH);
+  pinMode(waterPump1, OUTPUT);
+  pinMode(waterPump2, OUTPUT);
+  pinMode(waterPump3, OUTPUT);
+  pinMode(waterPump4, OUTPUT);
 
   pinMode(humiditySensor1, INPUT);
   pinMode(humiditySensor2, INPUT);
@@ -132,10 +119,46 @@ String getWaterLevelValues() {
 
 void loop() {
   String data = getPostData();
-  Serial.println(data.c_str());
-  if (NodeMCU.available() > 0) {
+
     Serial.println(data.c_str());
     NodeMCU.write(data.c_str());
+ 
+
+  String payload = NodeMCU.readString();
+
+  // Allocate JsonBuffer
+  const size_t capacity = JSON_OBJECT_SIZE(3) + JSON_ARRAY_SIZE(2) + 60;
+  DynamicJsonBuffer jsonBuffer(capacity);
+
+  // Parse JSON object
+  JsonObject& root = jsonBuffer.parseObject(payload);
+  if (!root.success()) {
+    Serial.println(F("Nelze převést json!"));
+    return;
+  }
+
+  if (root["sector1"] == true) {
+    digitalWrite(waterPump1, LOW);
+    delay(2000);
+    digitalWrite(waterPump1, HIGH);
+  }
+
+  if (root["sector2"] == true) {
+    digitalWrite(waterPump2, LOW);
+    delay(2000);
+    digitalWrite(waterPump2, HIGH);
+  }
+
+  if (root["sector3"] == true) {
+    digitalWrite(waterPump3, LOW);
+    delay(2000);
+    digitalWrite(waterPump3, HIGH);
+  }
+
+  if (root["sector4"] == true) {
+    digitalWrite(waterPump4, LOW);
+    delay(2000);
+    digitalWrite(waterPump4, HIGH);
   }
 
   delay(3000);
