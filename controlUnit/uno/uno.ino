@@ -1,19 +1,20 @@
 #include <SoftwareSerial.h>
 #include <ArduinoJson.h>
 
-SoftwareSerial NodeMCU(7, 6);
+SoftwareSerial NodeMCU_Send(8, 7);
+SoftwareSerial NodeMCU_Recieve(6, 5);
 
 const int humiditySensor1 = 19; // left top
-const int waterPump1 = 5; // right bottom
+const int waterPump1 = 12; // right bottom
 
 const int humiditySensor2 = 18; // right bottom
-const int waterPump2 = 6; // left bottom
+const int waterPump2 = 11; // left bottom
 
 const int humiditySensor3 = 17; // right top
-const int waterPump3 = 7; // left top
+const int waterPump3 = 10; // left top
 
 const int humiditySensor4 = 2; // left bottom
-const int waterPump4 = 8; // right top
+const int waterPump4 = 9; // right top
 
 const int photoResistor = A0;
 const int waterSensor = A3;
@@ -21,12 +22,17 @@ const int temperatureSensor = A1;
 
 void setup() {
   Serial.begin(9600);
-  NodeMCU.begin(9600);
+  NodeMCU_Send.begin(9600);
+  NodeMCU_Recieve.begin(9600);
 
   pinMode(waterPump1, OUTPUT);
   pinMode(waterPump2, OUTPUT);
   pinMode(waterPump3, OUTPUT);
   pinMode(waterPump4, OUTPUT);
+  digitalWrite(waterPump1, HIGH);
+  digitalWrite(waterPump2, HIGH);
+  digitalWrite(waterPump3, HIGH);
+  digitalWrite(waterPump4, HIGH);
 
   pinMode(humiditySensor1, INPUT);
   pinMode(humiditySensor2, INPUT);
@@ -53,22 +59,13 @@ String getPostData() {
   humidity4 = getHumidity4Values();
   lighting = getLightingValues();
   waterLevel = getWaterLevelValues();
-  Serial.println("_____________________________________________________");
 
   return "temperature=" + temperature + "&humidity1=" + humidity1  + "&humidity2=" + humidity2  + "&humidity3=" + humidity3  + "&humidity4=" + humidity4 + "&lighting=" + lighting + "&waterLevel=" + waterLevel;
 }
 
-int convertToLux(int voltage) {
-  float Vout = float(voltage) * (5 / float(1023));
-  float RLDR = (10000 * (5 - Vout));
-  int lux = 500 / (RLDR / 1000);
-
-  return lux;
-}
-
 String getLightingValues() {
-  int voltage = analogRead(photoResistor);
-  int lightValue = convertToLux(voltage);
+  float lightValue = analogRead(photoResistor);
+  lightValue = (lightValue / 1024) * 100;
 
   return String(lightValue);
 }
@@ -118,48 +115,53 @@ String getWaterLevelValues() {
 }
 
 void loop() {
+  // Send sensor data
   String data = getPostData();
+  NodeMCU_Send.write(data.c_str());
+  Serial.println(data.c_str());
+  delay(1000);
 
-    Serial.println(data.c_str());
-    NodeMCU.write(data.c_str());
- 
+  // Read actions
+  String jsonActions = NodeMCU_Recieve.readString();
 
-  String payload = NodeMCU.readString();
+  // Decode json
+  StaticJsonDocument<96> doc;
+  DeserializationError error = deserializeJson(doc, jsonActions);
 
-  // Allocate JsonBuffer
-  const size_t capacity = JSON_OBJECT_SIZE(3) + JSON_ARRAY_SIZE(2) + 60;
-  DynamicJsonBuffer jsonBuffer(capacity);
-
-  // Parse JSON object
-  JsonObject& root = jsonBuffer.parseObject(payload);
-  if (!root.success()) {
-    Serial.println(F("Nelze převést json!"));
+  if (error) {
     return;
   }
 
-  if (root["sector1"] == true) {
+  int sector1 = doc["sector1"];
+  int sector2 = doc["sector2"];
+  int sector3 = doc["sector3"];
+  int sector4 = doc["sector4"];
+
+  if (sector1 == 1) {
+    Serial.println("jsem tu1");
     digitalWrite(waterPump1, LOW);
     delay(2000);
     digitalWrite(waterPump1, HIGH);
   }
 
-  if (root["sector2"] == true) {
+  if (sector2 == 1) {
+    Serial.println("jsem tu2");
     digitalWrite(waterPump2, LOW);
     delay(2000);
     digitalWrite(waterPump2, HIGH);
   }
 
-  if (root["sector3"] == true) {
+  if (sector3 == 1) {
+    Serial.println("jsem tu3");
     digitalWrite(waterPump3, LOW);
     delay(2000);
     digitalWrite(waterPump3, HIGH);
   }
 
-  if (root["sector4"] == true) {
+  if (sector4 == 1) {
+    Serial.println("jsem tu4");
     digitalWrite(waterPump4, LOW);
     delay(2000);
     digitalWrite(waterPump4, HIGH);
   }
-
-  delay(3000);
 }

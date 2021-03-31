@@ -1,19 +1,18 @@
 #include <SoftwareSerial.h>
 
-SoftwareSerial Arduino(D6, D7);
+SoftwareSerial Arduino_Recieve(D7, D8);
+SoftwareSerial Arduino_Send(D5, D6);
 
-int temp, humi;
-String str;
 void setup() {
   Serial.begin(9600);
-  Arduino.begin(9600);
+  Arduino_Send.begin(9600);
+  Arduino_Recieve.begin(9600);
 }
 
-void loop() { // run over and over
-  Arduino.write("Hello from ESP");
+void loop() {
+  Arduino_Send.write("Hello from ESP!");
+  delay(1000);
 
-  if (Arduino.available() > 0) {
-    String data = Arduino.readString();
-    Serial.println(data);
-  }
+  String data = Arduino_Recieve.readString();
+  Serial.println(data);
 }

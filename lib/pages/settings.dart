@@ -1,4 +1,5 @@
 import 'package:M_M_Smart_Home/pages/settings/generalSettings.dart';
+import 'package:M_M_Smart_Home/pages/settings/humiditySettings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:M_M_Smart_Home/main.dart';
@@ -15,6 +16,7 @@ class SettingsState extends State<Settings> {
     super.initState();
   }
 
+  static const IconData check = IconData(0xe64c, fontFamily: 'MaterialIcons');
   var response;
 
   Widget build(BuildContext context) {
@@ -25,7 +27,7 @@ class SettingsState extends State<Settings> {
       body: SingleChildScrollView(
         child: Container(
           width: width,
-          height: height,
+          height: height - 140,
           child: Stack(
             children: <Widget>[
               Container(
@@ -77,7 +79,7 @@ class SettingsState extends State<Settings> {
   Widget buildContent(double width, double height) {
     return Positioned(
       width: width,
-      height: height * .70 - 40,
+      height: height,
       top: height * 0.20 + 34,
       child: Padding(
         padding:
@@ -86,19 +88,26 @@ class SettingsState extends State<Settings> {
           child: Column(
             children: <Widget>[
               Material(
-                elevation: 1,
-                color: Colors.white,
                 child: Column(
                   children: <Widget>[
                     buildItem(
                         icon: BoxedIcon(
-                          WeatherIcons.rain,
+                          WeatherIcons.time_4,
                           size: 20,
                           color: Colors.white,
                         ),
                         link: GeneralSettings(),
-                        title: "Nastavení zalévání",
+                        title: "Nastavení kontroly",
                         color: Colors.green),
+                    buildItem(
+                        icon: BoxedIcon(
+                          WeatherIcons.raindrop,
+                          size: 20,
+                          color: Colors.white,
+                        ),
+                        link: HumiditySettings(),
+                        title: "Nastavení zavlažování",
+                        color: Colors.blue),
                   ],
                 ),
               ),

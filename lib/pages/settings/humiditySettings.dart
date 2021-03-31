@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:M_M_Smart_Home/main.dart';
 import 'package:http/http.dart' as http;
+import 'package:toggle_switch/toggle_switch.dart';
 import 'package:numberpicker/numberpicker.dart';
 
 class HumiditySettings extends StatefulWidget {
@@ -12,6 +13,7 @@ class HumiditySettings extends StatefulWidget {
 
 class _HumiditySettingsState extends State<HumiditySettings> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  static const IconData check = IconData(0xe64c, fontFamily: 'MaterialIcons');
   final String apiUrl = ProjectSetup.url + "general-settings";
 
   @override
@@ -20,10 +22,10 @@ class _HumiditySettingsState extends State<HumiditySettings> {
     super.initState();
   }
 
-  int _currentHumidity1 = 50;
-  int _currentHumidity2 = 50;
-  int _currentHumidity3 = 50;
-  int _currentHumidity4 = 50;
+  int _currentWaterLevel1 = 50;
+  int _currentWaterLevel2 = 50;
+  int _currentWaterLevel3 = 50;
+  int _currentWaterLevel4 = 50;
   bool _fetchedData = false;
   String _error = 'Načítám data';
 
@@ -33,10 +35,10 @@ class _HumiditySettingsState extends State<HumiditySettings> {
     http.post(apiUrl, headers: {
       'Accept': 'application/json; charset=UTF-8',
     }, body: {
-      "humidity1": _currentHumidity1.toString(),
-      "humidity2": _currentHumidity2.toString(),
-      "humidity3": _currentHumidity3.toString(),
-      "humidity4": _currentHumidity4.toString()
+      "waterLevel1": _currentWaterLevel1.toString(),
+      "waterLevel2": _currentWaterLevel2.toString(),
+      "waterLevel3": _currentWaterLevel3.toString(),
+      "waterLevel4": _currentWaterLevel4.toString()
     }).then((response) {
       print('Response status: ${response.statusCode}');
       print('Response body: ${response.body}');
@@ -48,14 +50,14 @@ class _HumiditySettingsState extends State<HumiditySettings> {
   getDataFromServer() async {
     try {
       response =
-          await http.get(apiUrl, headers: {"Accept": "application/json"});
+      await http.get(apiUrl, headers: {"Accept": "application/json"});
 
       var jsonResponse = json.decode(response.body);
       setState(() {
-        _currentHumidity1 = jsonResponse['humidity1'];
-        _currentHumidity2 = jsonResponse['humidity2'];
-        _currentHumidity3 = jsonResponse['humidity3'];
-        _currentHumidity4 = jsonResponse['humidity4'];
+        _currentWaterLevel1 = jsonResponse['waterLevel1'];
+        _currentWaterLevel2 = jsonResponse['waterLevel2'];
+        _currentWaterLevel3 = jsonResponse['waterLevel3'];
+        _currentWaterLevel4 = jsonResponse['waterLevel4'];
         _fetchedData = true;
       });
     } catch (e) {
@@ -79,7 +81,7 @@ class _HumiditySettingsState extends State<HumiditySettings> {
       body: SingleChildScrollView(
         child: Container(
           width: width,
-          height: height + 300,
+          height: height + 350,
           child: Stack(
             children: <Widget>[
               Container(
@@ -121,7 +123,7 @@ class _HumiditySettingsState extends State<HumiditySettings> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                "Nastavení vlhkosti pro sektory",
+                "Nastavení zavlažování",
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -147,58 +149,58 @@ class _HumiditySettingsState extends State<HumiditySettings> {
                 child: Column(
                   children: <Widget>[
                     buildBodyCardTitle(
-                        title: "Zalévat sektor 1 od vlhkosti (%)"),
+                        title: "Zalévat sektor 1 od hladiny vody (%)"),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         new NumberPicker.integer(
-                            initialValue: _currentHumidity1,
+                            initialValue: _currentWaterLevel1,
                             minValue: 0,
                             maxValue: 100,
                             onChanged: (newValue1) {
-                              setState(() =>  _currentHumidity1 = newValue1);
+                              setState(() =>  _currentWaterLevel1 = newValue1);
                             }),
                       ],
                     ),
                     buildBodyCardTitle(
-                        title: "Zalévat sektor 2 od vlhkosti (%)"),
+                        title: "Zalévat sektor 2 od hladiny vody (%)"),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         new NumberPicker.integer(
-                            initialValue: _currentHumidity2,
+                            initialValue: _currentWaterLevel2,
                             minValue: 0,
                             maxValue: 100,
                             onChanged: (newValue2) {
-                              setState(() =>  _currentHumidity2 = newValue2);
+                              setState(() =>  _currentWaterLevel2 = newValue2);
                             }),
                       ],
                     ),
                     buildBodyCardTitle(
-                        title: "Zalévat sektor 3 od vlhkosti (%)"),
+                        title: "Zalévat sektor 3 od hladiny vody (%)"),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         new NumberPicker.integer(
-                            initialValue: _currentHumidity3,
+                            initialValue: _currentWaterLevel3,
                             minValue: 0,
                             maxValue: 100,
                             onChanged: (newValue3) {
-                              setState(() =>  _currentHumidity3 = newValue3);
+                              setState(() =>  _currentWaterLevel3 = newValue3);
                             }),
                       ],
                     ),
                     buildBodyCardTitle(
-                        title: "Zalévat sektor 4 od vlhkosti (%)"),
+                        title: "Zalévat sektor 4 od hladiny vody (%)"),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         new NumberPicker.integer(
-                            initialValue: _currentHumidity4,
+                            initialValue: _currentWaterLevel4,
                             minValue: 0,
                             maxValue: 100,
                             onChanged: (newValue4) {
-                              setState(() =>  _currentHumidity4 = newValue4);
+                              setState(() =>  _currentWaterLevel4 = newValue4);
                             }),
                       ],
                     ),

@@ -13,10 +13,12 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final String sensorDataUrl = ProjectSetup.url + "sensor-data-latest";
+  final String actionsUrl = ProjectSetup.url + "actions";
 
   @override
   void initState() {
     readSensorData();
+    readActions();
     super.initState();
   }
 
@@ -24,18 +26,62 @@ class _HomeState extends State<Home> {
       DateFormat('dd.MM.yyyy kk:mm').format(DateTime.now().toLocal());
 
   String _welcomeText = "Dobrý den";
+  String _statusText = "Načítám data";
 
   String _photoSensorValue = 'Načítám data';
   String _temperatureSensorValue = 'Načítám data';
-  String _humidity1SensorValue = 'Načítám data';
-  String _humidity2SensorValue = 'Načítám data';
-  String _humidity3SensorValue = 'Načítám data';
-  String _humidity4SensorValue = 'Načítám data';
   String _waterSensorValue = 'Načítám data';
-  int _waterSensorData = 20;
+  double _waterSensorData = 20.32;
+  String _nextControl = "21:00";
+
+  bool _sector1 = false;
+  bool _sector2 = false;
+  bool _sector3 = false;
+  bool _sector4 = false;
+
+  String _sector1Text = 'Načítám data';
+  String _sector2Text = 'Načítám data';
+  String _sector3Text = 'Načítám data';
+  String _sector4Text = 'Načítám data';
 
   var response;
+  var responseActions;
   IconData timeIcon = WeatherIcons.day_sunny;
+
+  readActions() async {
+    try {
+      responseActions =
+          await http.get(actionsUrl, headers: {"Accept": "application/json"});
+
+      var jsonResponseActions = json.decode(responseActions.body);
+
+      setState(() {
+        _sector1 = jsonResponseActions['sector1'];
+        _sector2 = jsonResponseActions['sector2'];
+        _sector3 = jsonResponseActions['sector3'];
+        _sector4 = jsonResponseActions['sector4'];
+
+        _sector1Text = _sector1 ? "Nezalito" : "Zalito";
+        _sector2Text = _sector2 ? "Nezalito" : "Zalito";
+        _sector3Text = _sector3 ? "Nezalito" : "Zalito";
+        _sector4Text = _sector4 ? "Nezalito" : "Zalito";
+
+        if (!_sector1 || !_sector2 || !_sector3 || !_sector4) {
+          _statusText = "Nezalito";
+        } else {
+          _statusText = "Zalito";
+        }
+      });
+    } catch (e) {
+      setState(() {
+        _sector1Text = 'Nelze načíst data';
+        _sector2Text = 'Nelze načíst data';
+        _sector3Text = 'Nelze načíst data';
+        _sector4Text = 'Nelze načíst data';
+        _statusText = 'Nelze načíst data';
+      });
+    }
+  }
 
   readSensorData() async {
     try {
@@ -45,36 +91,22 @@ class _HomeState extends State<Home> {
       var jsonResponse = json.decode(response.body);
 
       setState(() {
-        // print(jsonResponse);
-        _humidity1SensorValue = jsonResponse['humidity1'].toString();
-        _humidity1SensorValue = jsonResponse['humidity1'].toString();
-        _humidity2SensorValue = jsonResponse['humidity2'].toString();
-        _humidity2SensorValue = jsonResponse['humidity2'].toString();
-        _humidity3SensorValue = jsonResponse['humidity3'].toString();
-        _humidity3SensorValue = jsonResponse['humidity3'].toString();
-        _humidity4SensorValue = jsonResponse['humidity4'].toString();
-        _humidity4SensorValue = jsonResponse['humidity4'].toString();
-
         _temperatureSensorValue =
             jsonResponse['temperature'].toString() + "\u2103";
-        _photoSensorValue = jsonResponse['lighting'].toString();
+        _photoSensorValue = jsonResponse['lighting'].toString() + "%";
         _waterSensorValue = jsonResponse['waterLevel'].toString() + "%";
         _waterSensorData = jsonResponse['waterLevel'];
         int _photoSensorData = jsonResponse['lighting'];
 
-        if (_photoSensorData < 300) {
+        if (_photoSensorData < 30) {
           timeIcon = WeatherIcons.night_clear;
           _welcomeText = "Dobrý večer";
+          _nextControl = "8:00";
         }
       });
     } catch (e) {
       print(e);
       setState(() {
-        _humidity1SensorValue = 'Nelze načíst data';
-        _humidity2SensorValue = 'Nelze načíst data';
-        _humidity3SensorValue = 'Nelze načíst data';
-        _humidity4SensorValue = 'Nelze načíst data';
-
         _photoSensorValue = 'Nelze načíst data';
         _temperatureSensorValue = 'Nelze načíst data';
         _waterSensorValue = 'Nelze načíst data';
@@ -192,7 +224,7 @@ class _HomeState extends State<Home> {
                   children: <Widget>[
                     Text("Stav"),
                     Text(
-                      "Vše zalito",
+                      _statusText,
                       style: TextStyle(
                         color: Color(0xff053150),
                         fontWeight: FontWeight.bold,
@@ -212,7 +244,7 @@ class _HomeState extends State<Home> {
                   children: <Widget>[
                     Text("Další kontrola"),
                     Text(
-                      "9:00",
+                      _nextControl,
                       style: TextStyle(
                         color: Color(0xff053150),
                         fontWeight: FontWeight.bold,
@@ -240,8 +272,6 @@ class _HomeState extends State<Home> {
           child: Column(
             children: <Widget>[
               Material(
-                elevation: 1,
-                color: Colors.white,
                 child: Column(
                   children: <Widget>[
                     buildBodyCardTitle(title: "Data z čidel"),
@@ -273,36 +303,36 @@ class _HomeState extends State<Home> {
                       color: Colors.black87,
                     ),
                     buildNotificationItem(
-                        icon: WeatherIcons.humidity,
-                        itemTitle: "Vlhkost 1",
-                        sensorValue: _humidity1SensorValue,
+                        icon: WeatherIcons.raindrop,
+                        itemTitle: "Sektor 1",
+                        sensorValue: _sector1Text,
                         backgroundColor: Colors.blue),
                     Divider(
                       height: 3,
                       color: Colors.black87,
                     ),
                     buildNotificationItem(
-                        icon: WeatherIcons.humidity,
-                        itemTitle: "Vlhkost 2",
-                        sensorValue: _humidity2SensorValue,
+                        icon: WeatherIcons.raindrop,
+                        itemTitle: "Sektor 2",
+                        sensorValue: _sector2Text,
                         backgroundColor: Colors.blue),
                     Divider(
                       height: 3,
                       color: Colors.black87,
                     ),
                     buildNotificationItem(
-                        icon: WeatherIcons.humidity,
-                        itemTitle: "Vlhkost 3",
-                        sensorValue: _humidity3SensorValue,
+                        icon: WeatherIcons.raindrop,
+                        itemTitle: "Sektor 3",
+                        sensorValue: _sector3Text,
                         backgroundColor: Colors.blue),
                     Divider(
                       height: 3,
                       color: Colors.black87,
                     ),
                     buildNotificationItem(
-                        icon: WeatherIcons.humidity,
-                        itemTitle: "Vlhkost 4",
-                        sensorValue: _humidity4SensorValue,
+                        icon: WeatherIcons.raindrop,
+                        itemTitle: "Sektor 4",
+                        sensorValue: _sector4Text,
                         backgroundColor: Colors.blue),
                   ],
                 ),

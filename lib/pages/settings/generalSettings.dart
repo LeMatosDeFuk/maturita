@@ -22,10 +22,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     super.initState();
   }
 
-  int _currentWaterLevel1 = 50;
-  int _currentWaterLevel2 = 50;
-  int _currentWaterLevel3 = 50;
-  int _currentWaterLevel4 = 50;
   bool _morning = false;
   bool _evening = false;
   bool _fetchedData = false;
@@ -39,10 +35,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     }, body: {
       "checkMorning": _morning.toString(),
       "checkEvening": _evening.toString(),
-      "waterLevel1": _currentWaterLevel1.toString(),
-      "waterLevel2": _currentWaterLevel2.toString(),
-      "waterLevel3": _currentWaterLevel3.toString(),
-      "waterLevel4": _currentWaterLevel4.toString()
     }).then((response) {
       print('Response status: ${response.statusCode}');
       print('Response body: ${response.body}');
@@ -60,10 +52,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       setState(() {
         _morning = jsonResponse['checkMorning'] == 0 ? false : true;
         _evening = jsonResponse['checkEvening'] == 0 ? false : true;
-        _currentWaterLevel1 = jsonResponse['waterLevel1'];
-        _currentWaterLevel2 = jsonResponse['waterLevel2'];
-        _currentWaterLevel3 = jsonResponse['waterLevel3'];
-        _currentWaterLevel4 = jsonResponse['waterLevel4'];
         _fetchedData = true;
       });
     } catch (e) {
@@ -87,7 +75,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       body: SingleChildScrollView(
         child: Container(
           width: width,
-          height: height + 600,
+          height: height,
           child: Stack(
             children: <Widget>[
               Container(
@@ -129,7 +117,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                "Nastavení zalévání",
+                "Nastavení kontroly",
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -154,7 +142,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               Material(
                 child: Column(
                   children: <Widget>[
-                    buildBodyCardTitle(title: "Kontrolovat stav ráno (7:00)"),
+                    buildBodyCardTitle(title: "Kontrolovat stav ráno (8:00)"),
                     ToggleSwitch(
                       minWidth: 90.0,
                       initialLabelIndex: _morning == false ? 0 : 1,
@@ -174,7 +162,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                         }
                       },
                     ),
-                    buildBodyCardTitle(title: "Kontrolovat stav večer (22:00)"),
+                    buildBodyCardTitle(title: "Kontrolovat stav večer (21:00)"),
                     ToggleSwitch(
                       minWidth: 90.0,
                       initialLabelIndex: _evening == false ? 0 : 1,
@@ -194,63 +182,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                         }
                       },
                     ),
-                    buildBodyCardTitle(
-                        title: "Zalévat sektor 1 od hladiny vody (%)"),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        new NumberPicker.integer(
-                            initialValue: _currentWaterLevel1,
-                            minValue: 0,
-                            maxValue: 100,
-                            onChanged: (newValue1) {
-                              setState(() =>  _currentWaterLevel1 = newValue1);
-                            }),
-                      ],
-                    ),
-                    buildBodyCardTitle(
-                        title: "Zalévat sektor 2 od hladiny vody (%)"),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        new NumberPicker.integer(
-                            initialValue: _currentWaterLevel2,
-                            minValue: 0,
-                            maxValue: 100,
-                            onChanged: (newValue2) {
-                              setState(() =>  _currentWaterLevel2 = newValue2);
-                            }),
-                      ],
-                    ),
-                    buildBodyCardTitle(
-                        title: "Zalévat sektor 3 od hladiny vody (%)"),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        new NumberPicker.integer(
-                            initialValue: _currentWaterLevel3,
-                            minValue: 0,
-                            maxValue: 100,
-                            onChanged: (newValue3) {
-                              setState(() =>  _currentWaterLevel3 = newValue3);
-                            }),
-                      ],
-                    ),
-                    buildBodyCardTitle(
-                        title: "Zalévat sektor 4 od hladiny vody (%)"),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        new NumberPicker.integer(
-                            initialValue: _currentWaterLevel4,
-                            minValue: 0,
-                            maxValue: 100,
-                            onChanged: (newValue4) {
-                              setState(() =>  _currentWaterLevel4 = newValue4);
-                            }),
-                      ],
-                    ),
-                    buildSaveButton(),
                   ],
                 ),
               ),

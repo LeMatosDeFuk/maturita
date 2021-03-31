@@ -4,7 +4,8 @@
 #include <ESP8266HTTPClient.h>
 #include <SoftwareSerial.h>
 
-SoftwareSerial Arduino(D6, D7);
+SoftwareSerial Arduino_Recieve(D7, D8);
+SoftwareSerial Arduino_Send(D5, D6);
 
 const char *ssid = "MI9";
 const char *password = "huhuhuhu";
@@ -16,7 +17,8 @@ int httpCode;
 
 void setup() {
   Serial.begin(9600);
-  Arduino.begin(9600);
+  Arduino_Send.begin(9600);
+  Arduino_Recieve.begin(9600);
 
   WiFi.mode(WIFI_OFF);        // Zabraňuje problémům při připojování
   delay(1000);
@@ -41,20 +43,15 @@ void setup() {
 
 void loop() {
   HTTPClient http;
+
+  // send data
   http.begin(updateData);
   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-
-  if (Arduino.available() > 0) {
-    String postData = Arduino.readString();
-    Serial.println(postData);
-
-    // send data
-    httpCode = http.POST(postData);
-    Serial.println(httpCode);
-  }
-
+  String postData = Arduino_Recieve.readString();
+  Serial.println(postData);
+  httpCode = http.POST(postData);
+  Serial.println(httpCode);
   http.end();
-  delay(5000);
 
   // get actions
   http.begin(actions);
@@ -63,7 +60,7 @@ void loop() {
   Serial.println(httpCode);
   Serial.println(payload);
 
-  Arduino.write(payload.c_str());
+  Arduino_Send.write(payload.c_str());
 
   http.end();
   delay(5000);

@@ -1,21 +1,19 @@
 #include <SoftwareSerial.h>
 
-SoftwareSerial NodeMCU(7, 6);
-int temp, humi;
-String str;
+SoftwareSerial NodeMCU_Send(8, 7);
+SoftwareSerial NodeMCU_Recieve(6, 5);
+
 void setup() {
   Serial.begin(9600);
-  NodeMCU.begin(9600);
+  NodeMCU_Send.begin(9600);
+  NodeMCU_Recieve.begin(9600);
 }
 void loop()
 {
-  humi = 150;
-  temp = 132;
-  str = String('H') + String(humi) + String('T') + String(temp);
+    String data = NodeMCU_Recieve.readString();
+    Serial.println(data);
 
-  if (NodeMCU.available() > 0) {
-    Serial.println(str.c_str());
-    NodeMCU.write(str.c_str());
+    NodeMCU_Send.write("Hello from Arduino!");
     delay(1000);
-  }
+
 }
