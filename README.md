@@ -1,4 +1,6 @@
-@author Matěj Černý
+Autor/Author
+
+Matěj Černý
 
 # Anotace
 Sucho je aktuálně čím dál více probírané téma a naše práce se jím zabývá. Cílem je vytvořit mobilní aplikaci pro inteligentní ovládání zavlažování v domácnosti. Hlavním přínosem by mělo být efektivní hospodaření s vodou, zalévání při podmínkách, kdy to dané rostliny požadují a žádné starosti.
